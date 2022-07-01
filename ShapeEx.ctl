@@ -142,6 +142,7 @@ Private Declare Function GdipDrawPolygonI Lib "gdiplus" (ByVal graphics As Long,
 Private Declare Function GdipFillPolygonI Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, ByRef pPoints As Any, ByVal count As Long, ByVal FillMode As Long) As Long
 Private Declare Function GdipDrawClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, Points As Any, ByVal count As Long, ByVal tension As Single) As Long
 Private Declare Function GdipFillClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, Points As Any, ByVal count As Long, ByVal tension As Single, ByVal FillMode As Long) As Long
+Private Declare Function GdipSetPenDashStyle Lib "gdiplus" (ByVal pen As Long, ByVal dStyle As Long) As Long
 
 Private Enum FillModeConstants
     FillModeAlternate = &H0
@@ -203,11 +204,6 @@ Public Enum veBackStyleConstants
     veOpaque = 1
 End Enum
 
-Public Enum veBorderStyle2Constants
-    veBSTransparent = vbTransparent
-    veBSSolid = vbBSSolid
-End Enum
-
 Public Enum veFillStyle2Constants
     veFSTransparent = vbFSTransparent
     veFSSolid = vbFSSolid
@@ -244,7 +240,7 @@ Private mBorderColor As Long
 Private mShape As veShapeConstants
 Private mFillColor As Long
 Private mFillStyle  As Long
-Private mBorderStyle  As Long
+Private mBorderStyle  As BorderStyleConstants
 Private mBorderWidth  As Integer
 Private mClickable As Boolean
 Private mQuality As veQualityConstants
@@ -620,7 +616,7 @@ End Property
 
 Public Property Let FillStyle(ByVal nValue As veFillStyle2Constants)
     If nValue <> mFillStyle Then
-        If (nValue <> veFSSolid) And (nValue <> veFSTransparent) Then nValue = veFSTransparent
+        If (nValue <> veFSSolid) Or (nValue <> veFSTransparent) Then nValue = veFSTransparent
         mFillStyle = nValue
         Me.Refresh
         PropertyChanged "FillStyle"
@@ -628,16 +624,16 @@ Public Property Let FillStyle(ByVal nValue As veFillStyle2Constants)
 End Property
 
 
-Public Property Get BorderStyle() As veBorderStyle2Constants
+Public Property Get BorderStyle() As BorderStyleConstants
 Attribute BorderStyle.VB_Description = "Returns/sets the border style for an object."
 Attribute BorderStyle.VB_ProcData.VB_Invoke_Property = ";Apariencia"
 Attribute BorderStyle.VB_UserMemId = -504
     BorderStyle = mBorderStyle
 End Property
 
-Public Property Let BorderStyle(ByVal nValue As veBorderStyle2Constants)
+Public Property Let BorderStyle(ByVal nValue As BorderStyleConstants)
     If nValue <> mBorderStyle Then
-        If (nValue <> veBSTransparent) And (nValue <> veBSSolid) Then nValue = veBSSolid
+        If (nValue < vbTransparent) Or (nValue > vbBSInsideSolid) Then nValue = vbBSSolid
         mBorderStyle = nValue
         Me.Refresh
         PropertyChanged "BorderStyle"
@@ -847,6 +843,7 @@ Private Sub Draw()
     Dim iPts2() As POINTL
     Dim iPts3() As POINTL
     Dim iShift As Long
+    Dim iHalfBorderWidth As Long
     
     If mGdipToken = 0 Then InitGDI
     If GdipCreateFromHDC(UserControl.hdc, iGraphics) = 0 Then
@@ -900,6 +897,18 @@ Private Sub Draw()
             iPts(3).X = iUCWidth / 2 - iHeight / 2 + iHeight
             iPts(3).Y = iUCHeight / 2 - iHeight / 2
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).X = iPts(0).X + iHalfBorderWidth
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(1).Y = iPts(1).Y - iHalfBorderWidth
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+                iPts(3).Y = iPts(3).Y + iHalfBorderWidth
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -950,6 +959,13 @@ Private Sub Draw()
             iPts(2).X = iUCWidth / 2 + iEdge / 2
             iPts(2).Y = iUCHeight / 2 + iHeight / 2
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth / 2
+                iPts(2).X = iPts(2).X - iHalfBorderWidth / 2
+            End If
+                
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -967,6 +983,13 @@ Private Sub Draw()
             iPts(2).X = iUCWidth
             iPts(2).Y = iUCHeight
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth / 2
+                iPts(2).X = iPts(2).X - iHalfBorderWidth / 2
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -983,6 +1006,13 @@ Private Sub Draw()
             iPts(2).X = iUCWidth
             iPts(2).Y = iUCHeight
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth / 2
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -998,6 +1028,13 @@ Private Sub Draw()
             iPts(1).Y = iUCHeight
             iPts(2).X = iUCWidth
             iPts(2).Y = iUCHeight
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth / 2
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+            End If
             
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
@@ -1016,6 +1053,14 @@ Private Sub Draw()
             iPts(2).Y = iUCHeight
             iPts(3).X = iUCWidth
             iPts(3).Y = iUCHeight / 2
+             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+            End If
              
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
@@ -1036,6 +1081,14 @@ Private Sub Draw()
             iPts(2).Y = iUCHeight
             iPts(3).X = iUCWidth
             iPts(3).Y = iLng
+             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+            End If
              
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
@@ -1059,6 +1112,15 @@ Private Sub Draw()
             iPts(4).X = iUCWidth * 0.66
             iPts(4).Y = 0
              
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+                iPts(4).Y = iPts(4).Y + iHalfBorderWidth
+            End If
+             
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -1081,6 +1143,16 @@ Private Sub Draw()
             iPts(3).X = iUCWidth - iLng
             iPts(3).Y = 0
              
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(1).Y = iPts(1).Y - iHalfBorderWidth
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).Y = iPts(3).Y + iHalfBorderWidth
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -1103,6 +1175,18 @@ Private Sub Draw()
             iPts(3).X = iUCWidth
             iPts(3).Y = 0
              
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).X = iPts(0).X + iHalfBorderWidth
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(1).Y = iPts(1).Y - iHalfBorderWidth
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+                iPts(3).Y = iPts(3).Y + iHalfBorderWidth
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -1125,6 +1209,11 @@ Private Sub Draw()
             
             ReDim iPts(mVertices - 1)
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHeight = iHeight - mBorderWidth / 2
+                If iHeight < mBorderWidth Then iHeight = mBorderWidth
+            End If
+            
             For c = 0 To mVertices - 1
                 iPts(c).X = (iHeight / 2) * Cos(2 * Pi * (c + 1) / mVertices) + iUCWidth / 2
                 iPts(c).Y = (iHeight / 2) * Sin(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
@@ -1144,6 +1233,11 @@ Private Sub Draw()
             End If
             
             ReDim iPts(mVertices * 2 - 1)
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iHeight = iHeight - mBorderWidth / 2
+                If iHeight < mBorderWidth Then iHeight = mBorderWidth
+            End If
             
             For c = 0 To mVertices * 2 - 1
                 iPts(c).X = (iHeight / 2) * Cos(2 * Pi * (c + 1) / (mVertices * 2)) + iUCWidth / 2
@@ -1184,6 +1278,11 @@ Private Sub Draw()
             
             ReDim iPts(mVertices * 2 - 1)
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHeight = iHeight - mBorderWidth / 2
+                If iHeight < mBorderWidth Then iHeight = mBorderWidth
+            End If
+            
             For c = 0 To mVertices * 2 - 1
                 iPts(c).X = (iHeight / 2) * Cos(2 * Pi * (c + 1) / (mVertices * 2)) + iUCWidth / 2
                 iPts(c).Y = (iHeight / 2) * Sin(2 * Pi * (c + 1) / (mVertices * 2)) + iUCHeight / 2
@@ -1217,6 +1316,11 @@ Private Sub Draw()
         ElseIf mShape = veShapeHeart Then
             ReDim iPts(13)
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
+            
             iPts(0).X = iUCWidth * 0.5
             iPts(0).Y = iUCHeight * 0.19
             iPts(1).X = iUCWidth * 0.35
@@ -1246,6 +1350,14 @@ Private Sub Draw()
             iPts(13).X = iUCWidth * 0.5
             iPts(13).Y = iUCHeight * 0.19
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+                
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.45
             End If
@@ -1273,6 +1385,15 @@ Private Sub Draw()
             iPts(6).X = iUCWidth * 0.005
             iPts(6).Y = iUCHeight * 0.75
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).X = iPts(0).X + iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y + iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+                iPts(4).Y = iPts(4).Y - iHalfBorderWidth
+                iPts(6).X = iPts(6).X + iHalfBorderWidth
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -1283,6 +1404,11 @@ Private Sub Draw()
             
             ReDim iPts(11)
             iLng = iUCWidth * (0.2 + mShift / 50)
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
             
             ' top
             iPts(0).X = iUCWidth * 0.25 + iLng
@@ -1313,6 +1439,14 @@ Private Sub Draw()
             iPts(11).X = iUCWidth * 0.25 + iLng * 0.72
             iPts(11).Y = iUCHeight * 0.08
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+            
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.5
             End If
@@ -1329,6 +1463,11 @@ Private Sub Draw()
         
         ElseIf mShape = veShapeDrop Then
             ReDim iPts(11)
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
             
             iPts(0).X = iUCWidth * 0.49
             iPts(0).Y = iUCHeight * 0.005
@@ -1359,6 +1498,14 @@ Private Sub Draw()
             iPts(11).X = iUCWidth * 0.51
             iPts(11).Y = iUCHeight * 0.005
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+            
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.5
             End If
@@ -1367,6 +1514,11 @@ Private Sub Draw()
             End If
         ElseIf mShape = veShapeEgg Then
             ReDim iPts(11)
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
             
             iPts(0).X = iUCWidth * 0.4
             iPts(0).Y = iUCHeight * 0.1
@@ -1397,6 +1549,14 @@ Private Sub Draw()
             iPts(11).X = iUCWidth * 0.6
             iPts(11).Y = iUCHeight * 0.1
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+            
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.5
             End If
@@ -1412,6 +1572,17 @@ Private Sub Draw()
 '            On Error GoTo 0
 
         ElseIf mShape = veShapeLocation Then
+            Dim iUCWidthOrig As Long
+            Dim iUCHeightOrig As Long
+            
+            iUCWidthOrig = iUCWidth
+            iUCHeightOrig = iUCHeight
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
+            
             If iFilled Then
                 ReDim iPts(24)
                 
@@ -1478,9 +1649,17 @@ Private Sub Draw()
                 iPts(24).X = iUCWidth * 0.5
                 iPts(24).Y = iUCHeight * 0.945
                 
+                If mBorderStyle = vbBSInsideSolid Then
+                    iHalfBorderWidth = mBorderWidth / 2
+                    For c = 0 To UBound(iPts)
+                        iPts(c).X = iPts(c).X + iHalfBorderWidth
+                        iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                    Next
+                End If
+                
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.55, FillModeWinding
                 If mBorderStyle <> vbTransparent Then
-                    DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iUCWidth * 0.47 / 2, iUCHeight * 0.202, iUCWidth * 0.47, iUCHeight * 0.372
+                    DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidthOrig / 2 - iUCWidthOrig * 0.47 / 2, iUCHeightOrig * 0.202, iUCWidthOrig * 0.47, iUCHeightOrig * 0.372
                 End If
                 If mBorderStyle <> vbTransparent Then
                     ReDim iPts(11)
@@ -1514,6 +1693,15 @@ Private Sub Draw()
                     iPts(10).Y = iUCHeight * 0.77
                     iPts(11).X = iUCWidth * 0.51
                     iPts(11).Y = iUCHeight * 0.98
+                    
+                    If mBorderStyle = vbBSInsideSolid Then
+                        iHalfBorderWidth = mBorderWidth / 2
+                        For c = 0 To UBound(iPts)
+                            iPts(c).X = iPts(c).X + iHalfBorderWidth
+                            iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                        Next
+                    End If
+                    
                     DrawClosedCurve iGraphics, mBorderColor, mBorderWidth, iPts, 0.5
                 End If
             ElseIf mBorderStyle <> vbTransparent Then
@@ -1548,6 +1736,15 @@ Private Sub Draw()
                 iPts(10).Y = iUCHeight * 0.77
                 iPts(11).X = iUCWidth * 0.51
                 iPts(11).Y = iUCHeight * 0.98
+                
+                If mBorderStyle = vbBSInsideSolid Then
+                    iHalfBorderWidth = mBorderWidth / 2
+                    For c = 0 To UBound(iPts)
+                        iPts(c).X = iPts(c).X + iHalfBorderWidth
+                        iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                    Next
+                End If
+                
                 DrawClosedCurve iGraphics, mBorderColor, mBorderWidth, iPts, 0.5
                 
                 'DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iUCWidth * 0.47 / 2, iUCHeight * 0.205, iUCWidth * 0.47, iUCHeight * 0.365
@@ -1569,6 +1766,16 @@ Private Sub Draw()
             iPts(5).X = 0
             iPts(5).Y = iUCHeight * 0.72
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).X = iPts(0).X + iHalfBorderWidth
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y + iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+                iPts(3).Y = iPts(3).Y - iHalfBorderWidth
+                iPts(5).X = iPts(5).X + iHalfBorderWidth
+            End If
+            
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
             End If
@@ -1577,6 +1784,11 @@ Private Sub Draw()
             End If
         ElseIf mShape = veShapeCloud Then
             ReDim iPts(19)
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
             
             ' bottom, starting at the middle and going left
             iPts(0).X = iUCWidth * 0.49
@@ -1627,6 +1839,14 @@ Private Sub Draw()
             iPts(19).X = iUCWidth * 0.51
             iPts(19).Y = iUCHeight * 0.995
 
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.5
             End If
@@ -1636,6 +1856,11 @@ Private Sub Draw()
         ElseIf mShape = veShapeTalk Then
             iLng = mShift
             If iLng < 0 Then iLng = 0
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
             
             iShift = iUCWidth / 100 * (mShift - 18) * 0.5
             If iShift > 300 Then iShift = 300
@@ -1694,6 +1919,14 @@ Private Sub Draw()
                 iPts(16).Y = iUCHeight * 0.77
             End If
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+            
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.5
             End If
@@ -1723,6 +1956,11 @@ Private Sub Draw()
             
         ElseIf mShape = veShapeShield Then
             ReDim iPts(22)
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iUCWidth = iUCWidth - mBorderWidth
+                iUCHeight = iUCHeight - mBorderWidth
+            End If
             
             'point top
             iPts(0).X = iUCWidth * 0.51
@@ -1779,6 +2017,14 @@ Private Sub Draw()
             iPts(22).X = iUCWidth * 0.6
             iPts(22).Y = iUCHeight * 0.07 '
             
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                For c = 0 To UBound(iPts)
+                    iPts(c).X = iPts(c).X + iHalfBorderWidth
+                    iPts(c).Y = iPts(c).Y + iHalfBorderWidth
+                Next
+            End If
+            
             If iFilled Then
                 FillClosedCurve iGraphics, iFillColor, iPts, 0.5
             End If
@@ -1804,6 +2050,18 @@ Private Sub Draw()
             iPts(2).Y = iUCHeight
             iPts(3).X = iUCWidth
             iPts(3).Y = 0
+            
+            If mBorderStyle = vbBSInsideSolid Then
+                iHalfBorderWidth = mBorderWidth / 2
+                iPts(0).X = iPts(0).X + iHalfBorderWidth
+                iPts(0).Y = iPts(0).Y + iHalfBorderWidth
+                iPts(1).X = iPts(1).X + iHalfBorderWidth
+                iPts(1).Y = iPts(1).Y - iHalfBorderWidth
+                iPts(2).X = iPts(2).X - iHalfBorderWidth
+                iPts(2).Y = iPts(2).Y - iHalfBorderWidth
+                iPts(3).X = iPts(3).X - iHalfBorderWidth
+                iPts(3).Y = iPts(3).Y + iHalfBorderWidth
+            End If
             
             If iFilled Then
                 FillPolygon iGraphics, iFillColor, iPts
@@ -1836,8 +2094,14 @@ Private Sub DrawPolygon(ByVal nGraphics As Long, ByVal nColor As Long, ByVal nDr
     Dim hPen As Long
     
     If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
-        Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
-        
+        If ((mBorderStyle = vbBSSolid) Or (mBorderStyle = vbBSInsideSolid)) Or (mBorderWidth > 1) Then
+            Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        Else
+            Call GdipSetSmoothingMode(nGraphics, QualityModeLow)
+        End If
+        If ((mBorderStyle > vbBSSolid) And (mBorderStyle < vbBSInsideSolid)) Then
+            Call GdipSetPenDashStyle(hPen, mBorderStyle - 1)
+        End If
         If mCurvingFactor = 0 Then
             GdipDrawPolygonI nGraphics, hPen, Points(0), UBound(Points) + 1
         Else
@@ -1864,6 +2128,9 @@ Private Sub DrawClosedCurve(ByVal nGraphics As Long, ByVal nColor As Long, ByVal
     
     If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        If ((mBorderStyle > vbBSSolid) And (mBorderStyle < vbBSInsideSolid)) Then
+            Call GdipSetPenDashStyle(hPen, mBorderStyle - 1)
+        End If
         GdipDrawClosedCurve2I nGraphics, hPen, Points(0), UBound(Points) + 1, nTension
         Call GdipDeletePen(hPen)
     End If
@@ -1886,6 +2153,15 @@ Private Sub DrawEllipse(ByVal nGraphics As Long, ByVal nColor As Long, ByVal nDr
     
     If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        If ((mBorderStyle > vbBSSolid) And (mBorderStyle < vbBSInsideSolid)) Then
+            Call GdipSetPenDashStyle(hPen, mBorderStyle - 1)
+        End If
+        If mBorderStyle = vbBSInsideSolid Then
+            X = X + nDrawnWidth / 2
+            Y = Y + nDrawnWidth / 2
+            nWidth = nWidth - nDrawnWidth
+            nHeight = nHeight - nDrawnWidth
+        End If
         GdipDrawEllipseI nGraphics, hPen, X, Y, nWidth, nHeight
         Call GdipDeletePen(hPen)
     End If
@@ -1920,7 +2196,20 @@ Private Sub DrawRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal n
         iWhoKnowsPixels = mBorderWidth / nRoundSize
     End If
     If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
-        Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        If ((mBorderStyle = vbBSSolid) Or (mBorderStyle = vbBSInsideSolid)) Or (mBorderWidth > 1) Then
+            Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        Else
+            Call GdipSetSmoothingMode(nGraphics, QualityModeLow)
+        End If
+        If ((mBorderStyle > vbBSSolid) And (mBorderStyle < vbBSInsideSolid)) Then
+            Call GdipSetPenDashStyle(hPen, mBorderStyle - 1)
+        End If
+        If mBorderStyle = vbBSInsideSolid Then
+            X = X + nDrawnWidth / 2
+            Y = Y + nDrawnWidth / 2
+            nWidth = nWidth - nDrawnWidth
+            nHeight = nHeight - nDrawnWidth
+        End If
         
         GdipDrawLineI nGraphics, hPen, X + nRoundSize - iWhoKnowsPixels - 1, Y, X + nWidth - nRoundSize + iWhoKnowsPixels + 1, Y                                     ' top line
         GdipDrawLineI nGraphics, hPen, X + nWidth, Y + nRoundSize - iWhoKnowsPixels - 1, X + nWidth, Y + nHeight - nRoundSize + iWhoKnowsPixels + 1    ' right line
@@ -1952,7 +2241,20 @@ Private Sub DrawSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal 
     Dim hPen As Long
     
     If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
-        Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        If ((mBorderStyle = vbBSSolid) Or (mBorderStyle = vbBSInsideSolid)) Or (mBorderWidth > 1) Then
+            Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        Else
+            Call GdipSetSmoothingMode(nGraphics, QualityModeLow)
+        End If
+        If ((mBorderStyle > vbBSSolid) And (mBorderStyle < vbBSInsideSolid)) Then
+            Call GdipSetPenDashStyle(hPen, mBorderStyle - 1)
+        End If
+        If mBorderStyle = vbBSInsideSolid Then
+            X = X + nDrawnWidth / 2
+            Y = Y + nDrawnWidth / 2
+            nWidth = nWidth - nDrawnWidth
+            nHeight = nHeight - nDrawnWidth
+        End If
         GdipDrawArcI nGraphics, hPen, X, Y, nWidth, nHeight * 2 + nDrawnWidth, 180, 180
         GdipDrawLineI nGraphics, hPen, X + nDrawnWidth / 2 - 1, Y + nHeight, X + nWidth - nDrawnWidth / 2 + 1, Y + nHeight
         Call GdipDeletePen(hPen)
