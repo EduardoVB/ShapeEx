@@ -2,9 +2,9 @@ VERSION 5.00
 Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
 Begin VB.Form frmTest 
    Caption         =   "Shapes"
-   ClientHeight    =   10512
-   ClientLeft      =   1692
-   ClientTop       =   1128
+   ClientHeight    =   9912
+   ClientLeft      =   1752
+   ClientTop       =   1692
    ClientWidth     =   9336
    BeginProperty Font 
       Name            =   "Tahoma"
@@ -17,59 +17,112 @@ Begin VB.Form frmTest
    EndProperty
    LinkTopic       =   "Form2"
    LockControls    =   -1  'True
-   ScaleHeight     =   10512
+   ScaleHeight     =   9912
    ScaleWidth      =   9336
+   Begin VB.CommandButton cmdDecreaseBordderWidth 
+      Caption         =   "-"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   7.8
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   192
+      Left            =   8340
+      TabIndex        =   64
+      Top             =   6468
+      Width           =   312
+   End
+   Begin VB.CommandButton cmdIncreaseBordderWidth 
+      Caption         =   "+"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   7.8
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   192
+      Left            =   8340
+      TabIndex        =   63
+      Top             =   6288
+      Width           =   312
+   End
+   Begin VB.TextBox txtBorderWidth 
+      Alignment       =   1  'Right Justify
+      Height          =   324
+      Left            =   7704
+      TabIndex        =   62
+      Text            =   "1"
+      Top             =   6300
+      Width           =   624
+   End
+   Begin VB.ComboBox cboBorderStyle 
+      Height          =   312
+      ItemData        =   "frmTest.frx":0000
+      Left            =   2916
+      List            =   "frmTest.frx":0019
+      Style           =   2  'Dropdown List
+      TabIndex        =   60
+      Top             =   6300
+      Width           =   2904
+   End
    Begin VB.CheckBox chkMirrored 
       Caption         =   "Mirrored"
       Height          =   264
       Left            =   3816
-      TabIndex        =   59
-      Top             =   10152
+      TabIndex        =   58
+      Top             =   9432
       Width           =   1632
    End
    Begin VB.Timer tmrRefresh 
       Enabled         =   0   'False
       Interval        =   200
       Left            =   7272
-      Top             =   7416
+      Top             =   6696
    End
    Begin VB.CheckBox chkAutoRotation 
       Caption         =   "Animate"
       Height          =   264
       Left            =   6348
-      TabIndex        =   39
-      Top             =   7812
+      TabIndex        =   38
+      Top             =   7092
       Width           =   968
    End
    Begin VB.Timer tmrAutoRotation 
       Enabled         =   0   'False
       Interval        =   1
       Left            =   6876
-      Top             =   7416
+      Top             =   6696
    End
    Begin VB.TextBox txtVertices 
       Alignment       =   1  'Right Justify
       Height          =   324
       Left            =   1464
-      TabIndex        =   36
+      TabIndex        =   35
       Text            =   "5"
-      Top             =   9684
+      Top             =   8964
       Width           =   624
    End
    Begin VB.TextBox txtShift 
       Alignment       =   1  'Right Justify
       Height          =   324
       Left            =   1464
-      TabIndex        =   35
+      TabIndex        =   34
       Text            =   "20"
-      Top             =   9256
+      Top             =   8536
       Width           =   624
    End
    Begin ComctlLib.Slider sldOpacity 
       Height          =   300
       Left            =   2916
-      TabIndex        =   25
-      Top             =   7416
+      TabIndex        =   24
+      Top             =   6696
       Width           =   2904
       _ExtentX        =   5122
       _ExtentY        =   529
@@ -81,8 +134,8 @@ Begin VB.Form frmTest
    Begin ComctlLib.Slider sldRotationDegrees 
       Height          =   300
       Left            =   2916
-      TabIndex        =   27
-      Top             =   7776
+      TabIndex        =   26
+      Top             =   7056
       Width           =   2904
       _ExtentX        =   5122
       _ExtentY        =   529
@@ -92,8 +145,8 @@ Begin VB.Form frmTest
    Begin ComctlLib.Slider sldCurvingFactor 
       Height          =   300
       Left            =   2916
-      TabIndex        =   45
-      Top             =   8136
+      TabIndex        =   44
+      Top             =   7416
       Width           =   2904
       _ExtentX        =   5122
       _ExtentY        =   529
@@ -101,13 +154,51 @@ Begin VB.Form frmTest
       Min             =   -100
       Max             =   100
    End
+   Begin VB.Label Label3 
+      AutoSize        =   -1  'True
+      Caption         =   "BorderWidth:"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   9
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   216
+      Index           =   9
+      Left            =   6348
+      TabIndex        =   61
+      Top             =   6336
+      Width           =   1200
+   End
+   Begin VB.Label Label3 
+      AutoSize        =   -1  'True
+      Caption         =   "BorderStyle:"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   9
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   216
+      Index           =   8
+      Left            =   504
+      TabIndex        =   59
+      Top             =   6336
+      Width           =   1140
+   End
    Begin VB.Label Label1 
       Caption         =   "Flips the shape horizontally"
       Height          =   300
       Index           =   11
       Left            =   1512
-      TabIndex        =   58
-      Top             =   10152
+      TabIndex        =   57
+      Top             =   9432
       Width           =   2208
    End
    Begin VB.Label Label3 
@@ -125,8 +216,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   7
       Left            =   504
-      TabIndex        =   57
-      Top             =   10152
+      TabIndex        =   56
+      Top             =   9432
       Width           =   852
    End
    Begin VB.Label Label1 
@@ -134,15 +225,15 @@ Begin VB.Form frmTest
       Height          =   408
       Index           =   10
       Left            =   6176
-      TabIndex        =   56
-      Top             =   8172
+      TabIndex        =   55
+      Top             =   7452
       Width           =   3792
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   29
       Left            =   8100
-      Top             =   5328
+      Top             =   4848
       Visible         =   0   'False
       Width           =   900
       _ExtentX        =   1588
@@ -158,8 +249,8 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   29
       Left            =   8040
-      TabIndex        =   55
-      Top             =   6028
+      TabIndex        =   54
+      Top             =   5548
       Visible         =   0   'False
       Width           =   1020
    End
@@ -170,15 +261,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   28
       Left            =   6960
-      TabIndex        =   54
-      Top             =   3436
+      TabIndex        =   53
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   28
       Left            =   7070
-      Top             =   2736
+      Top             =   2256
       Width           =   800
       _ExtentX        =   1418
       _ExtentY        =   974
@@ -195,15 +286,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   27
       Left            =   8040
-      TabIndex        =   53
-      Top             =   3436
+      TabIndex        =   52
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   27
       Left            =   8100
-      Top             =   2736
+      Top             =   2256
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -220,15 +311,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   26
       Left            =   6960
-      TabIndex        =   52
-      Top             =   4732
+      TabIndex        =   51
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   26
       Left            =   7020
-      Top             =   4032
+      Top             =   3552
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -245,15 +336,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   25
       Left            =   8040
-      TabIndex        =   51
-      Top             =   4732
+      TabIndex        =   50
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   25
       Left            =   8250
-      Top             =   4032
+      Top             =   3552
       Width           =   600
       _ExtentX        =   1058
       _ExtentY        =   974
@@ -267,7 +358,7 @@ Begin VB.Form frmTest
       Height          =   552
       Index           =   24
       Left            =   7220
-      Top             =   5328
+      Top             =   4848
       Width           =   500
       _ExtentX        =   889
       _ExtentY        =   974
@@ -282,15 +373,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   24
       Left            =   6960
-      TabIndex        =   50
-      Top             =   6028
+      TabIndex        =   49
+      Top             =   5548
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   23
       Left            =   5940
-      Top             =   5328
+      Top             =   4848
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -307,8 +398,8 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   23
       Left            =   5880
-      TabIndex        =   49
-      Top             =   6028
+      TabIndex        =   48
+      Top             =   5548
       Width           =   1020
    End
    Begin VB.Label Label3 
@@ -326,8 +417,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   6
       Left            =   504
-      TabIndex        =   48
-      Top             =   8136
+      TabIndex        =   47
+      Top             =   7416
       Width           =   1332
    End
    Begin VB.Label Label1 
@@ -335,16 +426,16 @@ Begin VB.Form frmTest
       Height          =   300
       Index           =   9
       Left            =   2052
-      TabIndex        =   47
-      Top             =   8100
+      TabIndex        =   46
+      Top             =   7380
       Width           =   768
    End
    Begin VB.Label lblCurvingFactorValue 
       Caption         =   "0"
       Height          =   300
       Left            =   5900
-      TabIndex        =   46
-      Top             =   8172
+      TabIndex        =   45
+      Top             =   7452
       Width           =   624
    End
    Begin VB.Label Label2 
@@ -354,15 +445,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   22
       Left            =   4800
-      TabIndex        =   44
-      Top             =   6028
+      TabIndex        =   43
+      Top             =   5548
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   22
       Left            =   4860
-      Top             =   5328
+      Top             =   4848
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -374,7 +465,7 @@ Begin VB.Form frmTest
       Height          =   552
       Index           =   21
       Left            =   2950
-      Top             =   5328
+      Top             =   4848
       Width           =   400
       _ExtentX        =   699
       _ExtentY        =   974
@@ -389,15 +480,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   21
       Left            =   2640
-      TabIndex        =   43
-      Top             =   6028
+      TabIndex        =   42
+      Top             =   5548
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   20
       Left            =   4030
-      Top             =   5328
+      Top             =   4848
       Width           =   400
       _ExtentX        =   699
       _ExtentY        =   974
@@ -412,8 +503,8 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   20
       Left            =   3720
-      TabIndex        =   42
-      Top             =   6028
+      TabIndex        =   41
+      Top             =   5548
       Width           =   1020
    End
    Begin VB.Label Label2 
@@ -423,15 +514,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   19
       Left            =   1560
-      TabIndex        =   41
-      Top             =   6028
+      TabIndex        =   40
+      Top             =   5548
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   19
       Left            =   1870
-      Top             =   5328
+      Top             =   4848
       Width           =   400
       _ExtentX        =   699
       _ExtentY        =   974
@@ -447,15 +538,15 @@ Begin VB.Form frmTest
       Height          =   492
       Index           =   18
       Left            =   480
-      TabIndex        =   40
-      Top             =   6028
+      TabIndex        =   39
+      Top             =   5548
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   18
       Left            =   765
-      Top             =   5328
+      Top             =   4848
       Width           =   450
       _ExtentX        =   804
       _ExtentY        =   974
@@ -479,8 +570,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   5
       Left            =   504
-      TabIndex        =   38
-      Top             =   9720
+      TabIndex        =   37
+      Top             =   9000
       Width           =   804
    End
    Begin VB.Label Label1 
@@ -488,17 +579,17 @@ Begin VB.Form frmTest
       Height          =   372
       Index           =   8
       Left            =   2172
-      TabIndex        =   37
-      Top             =   9756
+      TabIndex        =   36
+      Top             =   9036
       Width           =   5124
    End
    Begin VB.Label Label1 
-      Caption         =   $"frmTest.frx":0000
+      Caption         =   $"frmTest.frx":0078
       Height          =   444
       Index           =   7
       Left            =   2172
-      TabIndex        =   34
-      Top             =   9216
+      TabIndex        =   33
+      Top             =   8496
       Width           =   6900
    End
    Begin VB.Label Label3 
@@ -516,8 +607,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   4
       Left            =   504
-      TabIndex        =   33
-      Top             =   9300
+      TabIndex        =   32
+      Top             =   8580
       Width           =   492
    End
    Begin VB.Label Label1 
@@ -525,8 +616,8 @@ Begin VB.Form frmTest
       Height          =   300
       Index           =   6
       Left            =   1512
-      TabIndex        =   32
-      Top             =   8856
+      TabIndex        =   31
+      Top             =   8136
       Width           =   5628
    End
    Begin VB.Label Label3 
@@ -544,8 +635,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   3
       Left            =   504
-      TabIndex        =   31
-      Top             =   8892
+      TabIndex        =   30
+      Top             =   8172
       Width           =   720
    End
    Begin VB.Label Label1 
@@ -553,8 +644,8 @@ Begin VB.Form frmTest
       Height          =   300
       Index           =   5
       Left            =   2196
-      TabIndex        =   30
-      Top             =   7776
+      TabIndex        =   29
+      Top             =   7056
       Width           =   624
    End
    Begin VB.Label Label3 
@@ -572,24 +663,24 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   2
       Left            =   504
-      TabIndex        =   29
-      Top             =   7776
+      TabIndex        =   28
+      Top             =   7056
       Width           =   1572
    End
    Begin VB.Label lblRotationDegreesValue 
       Caption         =   "0"
       Height          =   300
       Left            =   5900
-      TabIndex        =   28
-      Top             =   7812
+      TabIndex        =   27
+      Top             =   7092
       Width           =   408
    End
    Begin VB.Label lblOpacityValue 
       Caption         =   "100"
       Height          =   300
       Left            =   5900
-      TabIndex        =   26
-      Top             =   7452
+      TabIndex        =   25
+      Top             =   6732
       Width           =   624
    End
    Begin VB.Label Label1 
@@ -597,8 +688,8 @@ Begin VB.Form frmTest
       Height          =   300
       Index           =   4
       Left            =   2196
-      TabIndex        =   24
-      Top             =   7380
+      TabIndex        =   23
+      Top             =   6660
       Width           =   624
    End
    Begin VB.Label Label3 
@@ -616,8 +707,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   1
       Left            =   504
-      TabIndex        =   23
-      Top             =   7416
+      TabIndex        =   22
+      Top             =   6696
       Width           =   756
    End
    Begin VB.Label Label3 
@@ -635,8 +726,8 @@ Begin VB.Form frmTest
       Height          =   216
       Index           =   0
       Left            =   504
-      TabIndex        =   22
-      Top             =   8532
+      TabIndex        =   21
+      Top             =   7812
       Width           =   888
    End
    Begin VB.Label Label1 
@@ -644,24 +735,15 @@ Begin VB.Form frmTest
       Height          =   300
       Index           =   3
       Left            =   1512
-      TabIndex        =   21
-      Top             =   8532
-      Width           =   4152
-   End
-   Begin VB.Label Label1 
-      Caption         =   "New properties:"
-      Height          =   300
-      Index           =   2
-      Left            =   504
       TabIndex        =   20
-      Top             =   6912
-      Width           =   2208
+      Top             =   7812
+      Width           =   4152
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   17
       Left            =   6090
-      Top             =   4032
+      Top             =   3552
       Width           =   600
       _ExtentX        =   1058
       _ExtentY        =   974
@@ -677,14 +759,14 @@ Begin VB.Form frmTest
       Index           =   17
       Left            =   5880
       TabIndex        =   19
-      Top             =   4732
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   16
       Left            =   4860
-      Top             =   4032
+      Top             =   3552
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -702,14 +784,14 @@ Begin VB.Form frmTest
       Index           =   16
       Left            =   4800
       TabIndex        =   18
-      Top             =   4732
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   15
       Left            =   540
-      Top             =   4032
+      Top             =   3552
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -727,14 +809,14 @@ Begin VB.Form frmTest
       Index           =   15
       Left            =   480
       TabIndex        =   17
-      Top             =   4732
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   14
       Left            =   1620
-      Top             =   4032
+      Top             =   3552
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -750,14 +832,14 @@ Begin VB.Form frmTest
       Index           =   14
       Left            =   1560
       TabIndex        =   16
-      Top             =   4732
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   13
       Left            =   2700
-      Top             =   4032
+      Top             =   3552
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -773,14 +855,14 @@ Begin VB.Form frmTest
       Index           =   13
       Left            =   2640
       TabIndex        =   15
-      Top             =   4732
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   12
       Left            =   3780
-      Top             =   4032
+      Top             =   3552
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -798,14 +880,14 @@ Begin VB.Form frmTest
       Index           =   12
       Left            =   3720
       TabIndex        =   14
-      Top             =   4732
+      Top             =   4252
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   11
       Left            =   6090
-      Top             =   2736
+      Top             =   2256
       Width           =   600
       _ExtentX        =   1058
       _ExtentY        =   974
@@ -823,14 +905,14 @@ Begin VB.Form frmTest
       Index           =   11
       Left            =   5880
       TabIndex        =   13
-      Top             =   3436
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   10
       Left            =   4860
-      Top             =   2736
+      Top             =   2256
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -846,14 +928,14 @@ Begin VB.Form frmTest
       Index           =   10
       Left            =   4800
       TabIndex        =   12
-      Top             =   3436
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   9
       Left            =   540
-      Top             =   2736
+      Top             =   2256
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -867,7 +949,7 @@ Begin VB.Form frmTest
       Index           =   1
       Left            =   504
       TabIndex        =   11
-      Top             =   2196
+      Top             =   1836
       Width           =   2208
    End
    Begin VB.Label Label2 
@@ -878,14 +960,14 @@ Begin VB.Form frmTest
       Index           =   9
       Left            =   480
       TabIndex        =   10
-      Top             =   3436
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   8
       Left            =   1620
-      Top             =   2736
+      Top             =   2256
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -901,14 +983,14 @@ Begin VB.Form frmTest
       Index           =   8
       Left            =   1560
       TabIndex        =   9
-      Top             =   3436
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   7
       Left            =   2700
-      Top             =   2736
+      Top             =   2256
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -926,14 +1008,14 @@ Begin VB.Form frmTest
       Index           =   7
       Left            =   2640
       TabIndex        =   8
-      Top             =   3436
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   6
       Left            =   3780
-      Top             =   2736
+      Top             =   2256
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -949,14 +1031,14 @@ Begin VB.Form frmTest
       Index           =   6
       Left            =   3720
       TabIndex        =   7
-      Top             =   3436
+      Top             =   2956
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   562
       Index           =   5
       Left            =   5940
-      Top             =   720
+      Top             =   600
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   995
@@ -972,14 +1054,14 @@ Begin VB.Form frmTest
       Index           =   5
       Left            =   5880
       TabIndex        =   6
-      Top             =   1420
+      Top             =   1300
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   4
       Left            =   4860
-      Top             =   720
+      Top             =   600
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -995,7 +1077,7 @@ Begin VB.Form frmTest
       Index           =   4
       Left            =   4800
       TabIndex        =   5
-      Top             =   1420
+      Top             =   1300
       Width           =   1020
    End
    Begin VB.Label Label2 
@@ -1006,14 +1088,14 @@ Begin VB.Form frmTest
       Index           =   3
       Left            =   3720
       TabIndex        =   4
-      Top             =   1420
+      Top             =   1300
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   562
       Index           =   3
       Left            =   3780
-      Top             =   720
+      Top             =   600
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   995
@@ -1029,14 +1111,14 @@ Begin VB.Form frmTest
       Index           =   2
       Left            =   2640
       TabIndex        =   3
-      Top             =   1420
+      Top             =   1300
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   2
       Left            =   2700
-      Top             =   720
+      Top             =   600
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -1052,14 +1134,14 @@ Begin VB.Form frmTest
       Index           =   1
       Left            =   1560
       TabIndex        =   2
-      Top             =   1420
+      Top             =   1300
       Width           =   1020
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
       Index           =   1
       Left            =   1620
-      Top             =   720
+      Top             =   600
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -1075,7 +1157,7 @@ Begin VB.Form frmTest
       Index           =   0
       Left            =   480
       TabIndex        =   1
-      Top             =   1420
+      Top             =   1300
       Width           =   1020
    End
    Begin VB.Label Label1 
@@ -1091,7 +1173,7 @@ Begin VB.Form frmTest
       Height          =   552
       Index           =   0
       Left            =   540
-      Top             =   720
+      Top             =   600
       Width           =   900
       _ExtentX        =   1588
       _ExtentY        =   974
@@ -1106,6 +1188,16 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Private Sub cboBorderStyle_Click()
+    Dim iCtl As Control
+    
+    For Each iCtl In Me.Controls
+        If TypeName(iCtl) = "ShapeEx" Then
+            iCtl.BorderStyle = Val(cboBorderStyle.ListIndex)
+        End If
+    Next
+End Sub
+
 Private Sub chkAutoRotation_Click()
     tmrAutoRotation.Enabled = (chkAutoRotation.Value = 1)
 End Sub
@@ -1118,6 +1210,20 @@ Private Sub chkMirrored_Click()
             iCtl.Mirrored = chkMirrored.Value = 1
         End If
     Next
+End Sub
+
+Private Sub cmdDecreaseBordderWidth_Click()
+    If Val(txtBorderWidth.Text) > 1 Then
+        txtBorderWidth.Text = Val(txtBorderWidth.Text) - 1
+    End If
+End Sub
+
+Private Sub cmdIncreaseBordderWidth_Click()
+    txtBorderWidth.Text = Val(txtBorderWidth.Text) + 1
+End Sub
+
+Private Sub Form_Load()
+    cboBorderStyle.ListIndex = 1
 End Sub
 
 Private Sub sldOpacity_Change()
@@ -1157,6 +1263,22 @@ End Sub
 
 Private Sub sldRotationDegrees_Scroll()
     sldRotationDegrees_Change
+End Sub
+
+Private Sub txtBorderWidth_Change()
+    If Not IsNumeric(txtBorderWidth.Text) And (Trim(txtBorderWidth.Text) <> "") And (Trim(txtBorderWidth.Text) <> "-") Then
+        MsgBox "Value must be numeric", vbExclamation
+        txtBorderWidth.Text = ""
+        Exit Sub
+    End If
+    
+    Dim iCtl As Control
+    
+    For Each iCtl In Me.Controls
+        If TypeName(iCtl) = "ShapeEx" Then
+            iCtl.BorderWidth = Val(txtBorderWidth.Text)
+        End If
+    Next
 End Sub
 
 Private Sub tmrAutoRotation_Timer()

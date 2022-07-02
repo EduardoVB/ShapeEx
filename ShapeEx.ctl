@@ -398,7 +398,7 @@ Private Sub UserControl_Paint()
         iExpandOutsideForCurve = (UserControl.Width ^ 2 + UserControl.Height ^ 2) ^ 0.5 * 1.2
     End If
     If (mRotationDegrees <> 0) Then
-        If (mShape <> veShapeCircle) And (mShape <> veShapeSquare) And (mShape <> veShapeStar) And (mShape <> veShapeJaggedStar) Then
+        If (mShape <> veShapeCircle) And (mShape <> veShapeStar) And (mShape <> veShapeJaggedStar) Then
             iLng = Abs((UserControl.Width - UserControl.Height) / 2)
             iLng2 = (UserControl.Width ^ 2 + UserControl.Height ^ 2) ^ 0.5
             If iLng < iLng2 Then
@@ -648,6 +648,9 @@ Attribute BorderWidth.VB_UserMemId = -505
 End Property
 
 Public Property Let BorderWidth(ByVal nValue As Long)
+    If nValue < 1 Then
+        nValue = 1
+    End If
     If nValue <> mBorderWidth Then
         mBorderWidth = nValue
         Me.Refresh
