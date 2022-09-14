@@ -616,7 +616,7 @@ End Property
 
 Public Property Let FillStyle(ByVal nValue As veFillStyle2Constants)
     If nValue <> mFillStyle Then
-        If (nValue <> veFSSolid) Or (nValue <> veFSTransparent) Then nValue = veFSTransparent
+        If (nValue <> veFSSolid) And (nValue <> veFSTransparent) Then nValue = veFSTransparent
         mFillStyle = nValue
         Me.Refresh
         PropertyChanged "FillStyle"
@@ -633,7 +633,7 @@ End Property
 
 Public Property Let BorderStyle(ByVal nValue As BorderStyleConstants)
     If nValue <> mBorderStyle Then
-        If (nValue < vbTransparent) Or (nValue > vbBSInsideSolid) Then nValue = vbBSSolid
+        If (nValue < vbTransparent) And (nValue > vbBSInsideSolid) Then nValue = vbBSSolid
         mBorderStyle = nValue
         Me.Refresh
         PropertyChanged "BorderStyle"
