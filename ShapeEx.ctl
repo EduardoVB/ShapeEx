@@ -536,7 +536,7 @@ End Property
 
 Public Property Let Shape(ByVal nValue As veShapeConstants)
     If nValue <> mShape Then
-        If (nValue < veShapeRectangle) And (nValue > veShapeShield) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < veShapeRectangle) Or (nValue > veShapeShield) Then Err.Raise 380, TypeName(Me): Exit Property
         If ShapeHasShift(mShape) Then
             If mShift = mShiftPutAutomatically Then
                 mShift = 0
@@ -619,7 +619,7 @@ End Property
 
 Public Property Let FillStyle(ByVal nValue As veFillStyle2Constants)
     If nValue <> mFillStyle Then
-        If (nValue < veFSTransparent) And (nValue > veFSSolid) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < veFSSolid) Or (nValue > veFSTransparent) Then Err.Raise 380, TypeName(Me): Exit Property
         mFillStyle = nValue
         Me.Refresh
         PropertyChanged "FillStyle"
@@ -636,7 +636,7 @@ End Property
 
 Public Property Let BorderStyle(ByVal nValue As BorderStyleConstants)
     If nValue <> mBorderStyle Then
-        If (nValue < vbTransparent) And (nValue > vbBSInsideSolid) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < vbTransparent) Or (nValue > vbBSInsideSolid) Then Err.Raise 380, TypeName(Me): Exit Property
         mBorderStyle = nValue
         Me.Refresh
         PropertyChanged "BorderStyle"
