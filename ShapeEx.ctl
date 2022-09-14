@@ -369,6 +369,8 @@ Private Sub UserControl_Paint()
         If (mShape = veShapeStar) Or (mShape = veShapeJaggedStar) Then
             iExpandForPen = iExpandForPen * mVertices / 6
         End If
+    ElseIf mCurvingFactor > 0 Then
+        iExpandForPen = UserControl.ScaleWidth / UserControl.ScaleHeight * (1 + mCurvingFactor / 50)
     End If
     If ShapeHasShift(mShape) Then
         If UserControl.ScaleWidth > UserControl.ScaleHeight Then
