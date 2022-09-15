@@ -224,7 +224,7 @@ Public Enum veQualityConstants
 End Enum
 
 Public Enum veStyle3DConstants
-    veStyle3DNo = 0
+    veStyle3DNone = 0
     veStyle3DAddLight = 1
     veStyle3DAddShadow = 2
     veStyle3DAddBoth = 3
@@ -248,7 +248,7 @@ Private Const mdef_Vertices = 5
 Private Const mdef_CurvingFactor = 0
 Private Const mdef_Mirrored = False
 Private Const mdef_MousePointer = vbDefault
-Private Const mdef_Style3D = veStyle3DAddBoth
+Private Const mdef_Style3D = veStyle3DNone
 
 ' Properties
 Private mBackColor  As Long
@@ -850,7 +850,7 @@ End Property
 
 Public Property Let Style3D(ByVal nValue As veStyle3DConstants)
     If nValue <> mStyle3D Then
-        If (nValue < veStyle3DNo) Or (nValue > veStyle3DAddBoth) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < veStyle3DNone) Or (nValue > veStyle3DAddBoth) Then Err.Raise 380, TypeName(Me): Exit Property
         mStyle3D = nValue
         Me.Refresh
         PropertyChanged "Style3D"

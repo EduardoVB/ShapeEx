@@ -74,9 +74,9 @@ Begin VB.Form frmTest
    End
    Begin VB.ComboBox cboBorderStyle 
       Height          =   312
-      ItemData        =   "frmTest.frx":005A
+      ItemData        =   "frmTest.frx":005C
       Left            =   2916
-      List            =   "frmTest.frx":0073
+      List            =   "frmTest.frx":0075
       Style           =   2  'Dropdown List
       TabIndex        =   60
       Top             =   6300
@@ -613,7 +613,7 @@ Begin VB.Form frmTest
       Width           =   5124
    End
    Begin VB.Label Label1 
-      Caption         =   $"frmTest.frx":00D2
+      Caption         =   $"frmTest.frx":00D4
       Height          =   444
       Index           =   7
       Left            =   2172
