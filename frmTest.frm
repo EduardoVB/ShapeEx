@@ -19,11 +19,21 @@ Begin VB.Form frmTest
    LockControls    =   -1  'True
    ScaleHeight     =   10296
    ScaleWidth      =   9336
-   Begin VB.ComboBox cboStyle3D 
+   Begin VB.ComboBox cboStyle3DEffect 
       Height          =   312
       ItemData        =   "frmTest.frx":0000
+      Left            =   6840
+      List            =   "frmTest.frx":000D
+      Style           =   2  'Dropdown List
+      TabIndex        =   68
+      Top             =   9780
+      Width           =   2000
+   End
+   Begin VB.ComboBox cboStyle3D 
+      Height          =   312
+      ItemData        =   "frmTest.frx":004F
       Left            =   2916
-      List            =   "frmTest.frx":0010
+      List            =   "frmTest.frx":005F
       Style           =   2  'Dropdown List
       TabIndex        =   66
       Top             =   9780
@@ -74,9 +84,9 @@ Begin VB.Form frmTest
    End
    Begin VB.ComboBox cboBorderStyle 
       Height          =   312
-      ItemData        =   "frmTest.frx":005C
+      ItemData        =   "frmTest.frx":00AB
       Left            =   2916
-      List            =   "frmTest.frx":0075
+      List            =   "frmTest.frx":00C4
       Style           =   2  'Dropdown List
       TabIndex        =   60
       Top             =   6300
@@ -163,6 +173,15 @@ Begin VB.Form frmTest
       _Version        =   327682
       Min             =   -100
       Max             =   100
+   End
+   Begin VB.Label Label4 
+      Alignment       =   1  'Right Justify
+      Caption         =   "Effect:"
+      Height          =   252
+      Left            =   6000
+      TabIndex        =   67
+      Top             =   9828
+      Width           =   672
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -613,7 +632,7 @@ Begin VB.Form frmTest
       Width           =   5124
    End
    Begin VB.Label Label1 
-      Caption         =   $"frmTest.frx":00D4
+      Caption         =   $"frmTest.frx":0123
       Height          =   444
       Index           =   7
       Left            =   2172
@@ -1230,11 +1249,18 @@ End Sub
 Private Sub cboStyle3D_Click()
     Dim iCtl As Control
     
+    If cboStyle3D.ListIndex = -1 Then Exit Sub
+    If cboStyle3DEffect.ListIndex = -1 Then Exit Sub
+    
     For Each iCtl In Me.Controls
         If TypeName(iCtl) = "ShapeEx" Then
-            iCtl.Style3D = cboStyle3D.ListIndex
+            iCtl.Style3D = cboStyle3D.ListIndex Or (cboStyle3DEffect.ItemData(cboStyle3DEffect.ListIndex))
         End If
     Next
+End Sub
+
+Private Sub cboStyle3DEffect_Click()
+    cboStyle3D_Click
 End Sub
 
 Private Sub chkAutoRotation_Click()
@@ -1263,6 +1289,9 @@ End Sub
 
 Private Sub Form_Load()
     cboBorderStyle.ListIndex = 1
+    cboStyle3DEffect.ItemData(1) = 4
+    cboStyle3DEffect.ItemData(2) = 8
+    cboStyle3DEffect.ListIndex = 0
     cboStyle3D.ListIndex = 0
 End Sub
 
