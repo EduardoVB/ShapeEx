@@ -1,10 +1,10 @@
 VERSION 5.00
-Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
+Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "comctl32.ocx"
 Begin VB.Form frmTest 
    Caption         =   "Shapes"
-   ClientHeight    =   9912
-   ClientLeft      =   1752
-   ClientTop       =   1692
+   ClientHeight    =   10296
+   ClientLeft      =   1776
+   ClientTop       =   1044
    ClientWidth     =   9336
    BeginProperty Font 
       Name            =   "Tahoma"
@@ -17,8 +17,18 @@ Begin VB.Form frmTest
    EndProperty
    LinkTopic       =   "Form2"
    LockControls    =   -1  'True
-   ScaleHeight     =   9912
+   ScaleHeight     =   10296
    ScaleWidth      =   9336
+   Begin VB.ComboBox cboStyle3D 
+      Height          =   312
+      ItemData        =   "frmTest.frx":0000
+      Left            =   2916
+      List            =   "frmTest.frx":0010
+      Style           =   2  'Dropdown List
+      TabIndex        =   66
+      Top             =   9780
+      Width           =   2904
+   End
    Begin VB.CommandButton cmdDecreaseBordderWidth 
       Caption         =   "-"
       BeginProperty Font 
@@ -64,9 +74,9 @@ Begin VB.Form frmTest
    End
    Begin VB.ComboBox cboBorderStyle 
       Height          =   312
-      ItemData        =   "frmTest.frx":0000
+      ItemData        =   "frmTest.frx":005A
       Left            =   2916
-      List            =   "frmTest.frx":0019
+      List            =   "frmTest.frx":0073
       Style           =   2  'Dropdown List
       TabIndex        =   60
       Top             =   6300
@@ -153,6 +163,25 @@ Begin VB.Form frmTest
       _Version        =   327682
       Min             =   -100
       Max             =   100
+   End
+   Begin VB.Label Label3 
+      AutoSize        =   -1  'True
+      Caption         =   "Style3D:"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   9
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   216
+      Index           =   10
+      Left            =   504
+      TabIndex        =   65
+      Top             =   9828
+      Width           =   780
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -584,7 +613,7 @@ Begin VB.Form frmTest
       Width           =   5124
    End
    Begin VB.Label Label1 
-      Caption         =   $"frmTest.frx":0078
+      Caption         =   $"frmTest.frx":00D2
       Height          =   444
       Index           =   7
       Left            =   2172
@@ -1198,6 +1227,16 @@ Private Sub cboBorderStyle_Click()
     Next
 End Sub
 
+Private Sub cboStyle3D_Click()
+    Dim iCtl As Control
+    
+    For Each iCtl In Me.Controls
+        If TypeName(iCtl) = "ShapeEx" Then
+            iCtl.Style3D = cboStyle3D.ListIndex
+        End If
+    Next
+End Sub
+
 Private Sub chkAutoRotation_Click()
     tmrAutoRotation.Enabled = (chkAutoRotation.Value = 1)
 End Sub
@@ -1224,6 +1263,7 @@ End Sub
 
 Private Sub Form_Load()
     cboBorderStyle.ListIndex = 1
+    cboStyle3D.ListIndex = 0
 End Sub
 
 Private Sub sldOpacity_Change()

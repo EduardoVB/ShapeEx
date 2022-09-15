@@ -102,6 +102,7 @@ Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Lon
 Private Declare Function InvalidateRectAsNull Lib "user32" Alias "InvalidateRect" (ByVal hWnd As Long, ByVal lpRect As Long, ByVal bErase As Long) As Long
 'Private Declare Function GetUpdateRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT, ByVal bErase As Long) As Long
 Private Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function OleTranslateColor Lib "oleaut32.dll" (ByVal lOleColor As Long, ByVal lHPalette As Long, ByVal lColorRef As Long) As Long
 
 Private Type RECT
     Left As Long
@@ -132,17 +133,25 @@ Private Declare Function GdipCreateSolidFill Lib "GdiPlus.dll" (ByVal mColor As 
 Private Declare Function GdipFillEllipseI Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mBrush As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long) As Long
 Private Declare Function GdipFillRectangleI Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mBrush As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long) As Long
 Private Declare Function GdipDrawEllipseI Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mPen As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long) As Long
-Private Declare Function GdipCreatePen1 Lib "gdiplus" (ByVal color As Long, ByVal Width As Single, ByVal unit As Long, pen As Long) As Long
+Private Declare Function GdipCreatePen1 Lib "gdiplus" (ByVal Color As Long, ByVal Width As Single, ByVal unit As Long, pen As Long) As Long
 Private Declare Function GdipDeletePen Lib "GdiPlus.dll" (ByVal mPen As Long) As Long
 Private Declare Function GdipDrawArcI Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, ByVal startAngle As Single, ByVal sweepAngle As Single) As Long
 Private Declare Function GdipDrawLineI Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 Private Declare Function GdipFillPieI Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, ByVal startAngle As Single, ByVal sweepAngle As Single) As Long
 Private Declare Function TranslateColor Lib "olepro32.dll" Alias "OleTranslateColor" (ByVal clr As OLE_COLOR, ByVal palet As Long, Col As Long) As Long
-Private Declare Function GdipDrawPolygonI Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, ByRef pPoints As Any, ByVal count As Long) As Long
-Private Declare Function GdipFillPolygonI Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, ByRef pPoints As Any, ByVal count As Long, ByVal FillMode As Long) As Long
-Private Declare Function GdipDrawClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, Points As Any, ByVal count As Long, ByVal tension As Single) As Long
-Private Declare Function GdipFillClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, Points As Any, ByVal count As Long, ByVal tension As Single, ByVal FillMode As Long) As Long
+Private Declare Function GdipDrawPolygonI Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, ByRef pPoints As Any, ByVal Count As Long) As Long
+Private Declare Function GdipFillPolygonI Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, ByRef pPoints As Any, ByVal Count As Long, ByVal FillMode As Long) As Long
+Private Declare Function GdipDrawClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, Points As Any, ByVal Count As Long, ByVal tension As Single) As Long
+Private Declare Function GdipFillClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, Points As Any, ByVal Count As Long, ByVal tension As Single, ByVal FillMode As Long) As Long
 Private Declare Function GdipSetPenDashStyle Lib "gdiplus" (ByVal pen As Long, ByVal dStyle As Long) As Long
+Private Declare Function GdipCreatePath Lib "GdiPlus.dll" (ByVal mBrushMode As Long, ByRef mPath As Long) As Long
+Private Declare Function GdipAddPathEllipseI Lib "GdiPlus.dll" (ByVal mPath As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long) As Long
+Private Declare Function GdipDeletePath Lib "GdiPlus.dll" (ByVal mPath As Long) As Long
+Private Declare Function GdipSetPathGradientCenterColor Lib "GdiPlus.dll" (ByVal mBrush As Long, ByVal mColors As Long) As Long
+Private Declare Function GdipSetPathGradientSurroundColorsWithCount Lib "GdiPlus.dll" (ByVal mBrush As Long, ByRef mColor As Long, ByRef mCount As Long) As Long
+Private Declare Function GdipCreatePathGradientFromPath Lib "GdiPlus.dll" (ByVal mPath As Long, ByRef mPolyGradient As Long) As Long
+Private Declare Function GdipCreatePathGradientI Lib "gdiplus" (Points As POINTL, ByVal Count As Long, ByVal WrapMd As Long, polyGradient As Long) As Long
+
 
 Private Enum FillModeConstants
     FillModeAlternate = &H0
@@ -214,6 +223,13 @@ Public Enum veQualityConstants
     veQualityHigh = 1
 End Enum
 
+Public Enum veStyle3DConstants
+    veStyle3DNo = 0
+    veStyle3DAddLight = 1
+    veStyle3DAddShadow = 2
+    veStyle3DAddBoth = 3
+End Enum
+
 ' Property defaults
 Private Const mdef_BackColor = vbButtonFace
 Private Const mdef_BackStyle = veTransparent
@@ -232,6 +248,7 @@ Private Const mdef_Vertices = 5
 Private Const mdef_CurvingFactor = 0
 Private Const mdef_Mirrored = False
 Private Const mdef_MousePointer = vbDefault
+Private Const mdef_Style3D = veStyle3DAddBoth
 
 ' Properties
 Private mBackColor  As Long
@@ -252,6 +269,7 @@ Private mCurvingFactor As Integer
 Private mMirrored As Boolean
 Private mMousePointer As Integer
 Private mMouseIcon As StdPicture
+Private mStyle3D As veStyle3DConstants
 
 Private mGdipToken As Long
 Private mContainerHwnd As Long
@@ -305,7 +323,8 @@ Private Sub UserControl_InitProperties()
     mMirrored = mdef_Mirrored
     mMousePointer = mdef_MousePointer
     Set mMouseIcon = Nothing
-
+    mStyle3D = mdef_Style3D
+    
     On Error Resume Next
     mContainerHwnd = UserControl.ContainerHwnd
     mUserMode = Ambient.UserMode
@@ -468,6 +487,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     mMirrored = PropBag.ReadProperty("Mirrored", mdef_Mirrored)
     mMousePointer = PropBag.ReadProperty("MousePointer", mdef_MousePointer)
     Set mMouseIcon = PropBag.ReadProperty("MouseIcon", Nothing)
+    mStyle3D = PropBag.ReadProperty("Style3D", mdef_Style3D)
     
     UserControl.MousePointer = mMousePointer
     Set UserControl.MouseIcon = mMouseIcon
@@ -509,6 +529,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "Mirrored", mMirrored, mdef_Mirrored
     PropBag.WriteProperty "MousePointer", mMousePointer, mdef_MousePointer
     PropBag.WriteProperty "MouseIcon", mMouseIcon, Nothing
+    PropBag.WriteProperty "Style3D", mStyle3D, mdef_Style3D
 End Sub
 
 
@@ -819,6 +840,19 @@ Public Property Set MouseIcon(ByVal nValue As StdPicture)
         Set mMouseIcon = nValue
         Set UserControl.MouseIcon = mMouseIcon
         PropertyChanged "MouseIcon"
+    End If
+End Property
+
+
+Public Property Get Style3D() As veStyle3DConstants
+    Style3D = mStyle3D
+End Property
+
+Public Property Let Style3D(ByVal nValue As veStyle3DConstants)
+    If nValue <> mStyle3D Then
+        mStyle3D = nValue
+        Me.Refresh
+        PropertyChanged "Style3D"
     End If
 End Property
 
@@ -2083,8 +2117,19 @@ End Sub
 
 Private Sub FillPolygon(ByVal nGraphics As Long, ByVal nColor As Long, Points() As POINTL, Optional nFillMode As FillModeConstants = FillModeAlternate)
     Dim hBrush As Long
+    Dim iRet As Long
     
-    If GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush) = 0 Then
+    If mStyle3D Then
+        iRet = GdipCreatePathGradientI(Points(0), UBound(Points) + 1, 0&, hBrush)
+        If iRet = 0 Then
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DAddLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DAddShadow, 200, 255)), mOpacity), 1
+        End If
+    Else
+        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
+    End If
+    
+    If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         If mCurvingFactor = 0 Then
             GdipFillPolygonI nGraphics, hBrush, Points(0), UBound(Points) + 1, nFillMode
@@ -2120,8 +2165,21 @@ End Sub
 
 Private Sub FillClosedCurve(ByVal nGraphics As Long, ByVal nColor As Long, Points() As POINTL, ByVal nTension As Single, Optional nFillMode As FillModeConstants = FillModeAlternate)
     Dim hBrush As Long
+    Dim iRet As Long
+    Dim iPoints() As POINTL
     
-    If GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush) = 0 Then
+    If mStyle3D Then
+        iPoints = ExpandPointsL(Points, UserControl.ScaleWidth / 40, UserControl.ScaleHeight / 40)
+        iRet = GdipCreatePathGradientI(iPoints(0), UBound(Points) + 1, 0&, hBrush)
+        If iRet = 0 Then
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DAddLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DAddShadow, 200, 255)), mOpacity), 1
+        End If
+    Else
+        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
+    End If
+    
+    If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         GdipFillClosedCurve2I nGraphics, hBrush, Points(0), UBound(Points) + 1, nTension, nFillMode
         Call GdipDeleteBrush(hBrush)
@@ -2146,11 +2204,28 @@ End Sub
 
 Private Sub FillEllipse(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long)
     Dim hBrush As Long
+    Dim iRet As Long
+    Dim iPath As Long
     
-    If GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush) = 0 Then
+    If mStyle3D Then
+        GdipCreatePath 0&, iPath
+        GdipAddPathEllipseI iPath, X, Y, nWidth, nHeight
+        iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+        If iRet = 0 Then
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DAddLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DAddShadow, 200, 255)), mOpacity), 1
+        End If
+    Else
+        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
+    End If
+    
+    If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         GdipFillEllipseI nGraphics, hBrush, X, Y, nWidth, nHeight
         Call GdipDeleteBrush(hBrush)
+        If mStyle3D Then
+            GdipDeletePath iPath
+        End If
     End If
 End Sub
 
@@ -2176,9 +2251,28 @@ End Sub
 
 Private Sub FillRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, Optional ByVal nRoundSize As Long = 10)
     Dim hBrush As Long
+    Dim iRet As Long
+    Dim iPoints(3) As POINTL
     
-    If GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush) = 0 Then
-        
+    If mStyle3D Then
+        iPoints(0).X = X
+        iPoints(0).Y = Y
+        iPoints(1).X = X + nWidth
+        iPoints(1).Y = Y
+        iPoints(2).X = X + nWidth
+        iPoints(2).Y = Y + nHeight
+        iPoints(3).X = X
+        iPoints(3).Y = Y + nHeight
+        iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+        If iRet = 0 Then
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DAddLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DAddShadow, 200, 255)), mOpacity), 1
+        End If
+    Else
+        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
+    End If
+    
+    If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         GdipFillRectangleI nGraphics, hBrush, X + nRoundSize - 1, Y, nWidth - 2 * nRoundSize + 2, nRoundSize                                                                                      ' top line
         GdipFillRectangleI nGraphics, hBrush, X, Y + nRoundSize - 1, nWidth, Y + nHeight - nRoundSize * 2 + 2                                                                                       ' middle space
@@ -2234,8 +2328,28 @@ End Sub
 
 Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long)
     Dim hBrush As Long
+    Dim iRet As Long
+    Dim iPoints(3) As POINTL
     
-    If GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush) = 0 Then
+    If mStyle3D Then
+        iPoints(0).X = X
+        iPoints(0).Y = Y
+        iPoints(1).X = X + nWidth
+        iPoints(1).Y = Y
+        iPoints(2).X = X + nWidth
+        iPoints(2).Y = Y + nHeight
+        iPoints(3).X = X
+        iPoints(3).Y = Y + nHeight
+        iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+        If iRet = 0 Then
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DAddLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DAddShadow, 200, 255)), mOpacity), 1
+        End If
+    Else
+        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
+    End If
+    
+    If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         GdipFillPieI nGraphics, hBrush, X, Y, nWidth, nHeight * 2, 180, 180
         Call GdipDeleteBrush(hBrush)
@@ -2405,3 +2519,55 @@ Private Sub SetCurvingFactor2()
         mCurvingFactor2 = mCurvingFactor / 100 * 1
     End If
 End Sub
+
+' From Leandro Ascierto
+Private Function ShiftColor(ByVal clrFirst As Long, ByVal clrSecond As Long, ByVal lAlpha As Long) As Long
+    Dim clrFore(3)         As Byte
+    Dim clrBack(3)         As Byte
+ 
+    OleTranslateColor clrFirst, 0, VarPtr(clrFore(0))
+    OleTranslateColor clrSecond, 0, VarPtr(clrBack(0))
+    
+    clrFore(0) = (clrFore(0) * lAlpha + clrBack(0) * (255 - lAlpha)) / 255
+    clrFore(1) = (clrFore(1) * lAlpha + clrBack(1) * (255 - lAlpha)) / 255
+    clrFore(2) = (clrFore(2) * lAlpha + clrBack(2) * (255 - lAlpha)) / 255
+     
+    CopyMemory ShiftColor, clrFore(0), 4
+End Function
+
+Private Function ExpandPointsL(nPoints() As POINTL, nExpandX As Long, nExpandY As Long) As POINTL()
+    Dim iCount As Long
+    Dim c As Long
+    Dim iRect As RECT
+    Dim iCenterX As Single
+    Dim iCenterY As Single
+    Dim iRet() As POINTL
+    
+    iRect.Top = 0
+    iRect.Bottom = 0
+    iRect.Left = UserControl.ScaleWidth * 2
+    iRect.Top = UserControl.ScaleHeight * 2
+    iCount = UBound(nPoints) + 1
+    For c = 0 To iCount - 1
+        If nPoints(c).X < iRect.Left Then iRect.Left = nPoints(c).X
+        If nPoints(c).X > iRect.Right Then iRect.Right = nPoints(c).X
+        If nPoints(c).Y < iRect.Top Then iRect.Top = nPoints(c).Y
+        If nPoints(c).Y > iRect.Bottom Then iRect.Bottom = nPoints(c).Y
+    Next
+    iCenterX = (iRect.Left + iRect.Right) / 2
+    iCenterY = (iRect.Top + iRect.Bottom) / 2
+    ReDim iRet(iCount - 1)
+    For c = 0 To iCount - 1
+        If nPoints(c).X < iCenterX Then
+            iRet(c).X = nPoints(c).X - nExpandX
+        Else
+            iRet(c).X = nPoints(c).X + nExpandX
+        End If
+        If nPoints(c).Y < iCenterY Then
+            iRet(c).Y = nPoints(c).Y - nExpandY
+        Else
+            iRet(c).Y = nPoints(c).Y + nExpandY
+        End If
+    Next
+    ExpandPointsL = iRet
+End Function
