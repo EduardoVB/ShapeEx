@@ -850,6 +850,7 @@ End Property
 
 Public Property Let Style3D(ByVal nValue As veStyle3DConstants)
     If nValue <> mStyle3D Then
+        If (nValue < veStyle3DNo) Or (nValue > veStyle3DAddBoth) Then Err.Raise 380, TypeName(Me): Exit Property
         mStyle3D = nValue
         Me.Refresh
         PropertyChanged "Style3D"
