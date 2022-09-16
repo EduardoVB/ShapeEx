@@ -16,6 +16,7 @@ Begin VB.Form frmTest
       Strikethrough   =   0   'False
    EndProperty
    LinkTopic       =   "Form2"
+   LockControls    =   -1  'True
    ScaleHeight     =   10728
    ScaleWidth      =   9336
    Begin VB.ComboBox cboStyle3DEffect 
@@ -83,9 +84,9 @@ Begin VB.Form frmTest
    End
    Begin VB.ComboBox cboBorderStyle 
       Height          =   312
-      ItemData        =   "frmTest.frx":00AB
+      ItemData        =   "frmTest.frx":00A2
       Left            =   2916
-      List            =   "frmTest.frx":00C4
+      List            =   "frmTest.frx":00BB
       Style           =   2  'Dropdown List
       TabIndex        =   60
       Top             =   6300
@@ -866,7 +867,7 @@ Begin VB.Form frmTest
       Width           =   5124
    End
    Begin VB.Label Label1 
-      Caption         =   $"frmTest.frx":0123
+      Caption         =   $"frmTest.frx":011A
       Height          =   444
       Index           =   7
       Left            =   2172
