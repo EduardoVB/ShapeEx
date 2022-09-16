@@ -2,7 +2,7 @@ VERSION 5.00
 Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "comctl32.ocx"
 Begin VB.Form frmTest 
    Caption         =   "Shapes"
-   ClientHeight    =   10296
+   ClientHeight    =   10728
    ClientLeft      =   1776
    ClientTop       =   1044
    ClientWidth     =   9336
@@ -16,18 +16,17 @@ Begin VB.Form frmTest
       Strikethrough   =   0   'False
    EndProperty
    LinkTopic       =   "Form2"
-   LockControls    =   -1  'True
-   ScaleHeight     =   10296
+   ScaleHeight     =   10728
    ScaleWidth      =   9336
    Begin VB.ComboBox cboStyle3DEffect 
       Height          =   312
       ItemData        =   "frmTest.frx":0000
-      Left            =   6840
+      Left            =   2916
       List            =   "frmTest.frx":000D
       Style           =   2  'Dropdown List
-      TabIndex        =   68
-      Top             =   9780
-      Width           =   2000
+      TabIndex        =   67
+      Top             =   10140
+      Width           =   2904
    End
    Begin VB.ComboBox cboStyle3D 
       Height          =   312
@@ -174,14 +173,406 @@ Begin VB.Form frmTest
       Min             =   -100
       Max             =   100
    End
-   Begin VB.Label Label4 
-      Alignment       =   1  'Right Justify
-      Caption         =   "Effect:"
-      Height          =   252
-      Left            =   6000
-      TabIndex        =   67
-      Top             =   9828
-      Width           =   672
+   Begin VB.Label Label3 
+      AutoSize        =   -1  'True
+      Caption         =   "Style3DEffect:"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   9
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   216
+      Index           =   11
+      Left            =   504
+      TabIndex        =   68
+      Top             =   10200
+      Width           =   1308
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   29
+      Left            =   8100
+      Top             =   4848
+      Visible         =   0   'False
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      FillColor       =   16744576
+      FillStyle       =   0
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   24
+      Left            =   7220
+      Top             =   4848
+      Width           =   500
+      _ExtentX        =   889
+      _ExtentY        =   974
+      Shape           =   28
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   23
+      Left            =   5940
+      Top             =   4848
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   27
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   22
+      Left            =   4860
+      Top             =   4848
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   26
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   21
+      Left            =   2950
+      Top             =   4848
+      Width           =   400
+      _ExtentX        =   699
+      _ExtentY        =   974
+      Shape           =   24
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   20
+      Left            =   4030
+      Top             =   4848
+      Width           =   400
+      _ExtentX        =   699
+      _ExtentY        =   974
+      Shape           =   25
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   19
+      Left            =   1870
+      Top             =   4848
+      Width           =   400
+      _ExtentX        =   699
+      _ExtentY        =   974
+      Shape           =   23
+      FillColor       =   16744576
+      FillStyle       =   0
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   18
+      Left            =   765
+      Top             =   4848
+      Width           =   450
+      _ExtentX        =   804
+      _ExtentY        =   974
+      Shape           =   22
+      FillColor       =   16744576
+      FillStyle       =   0
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   26
+      Left            =   7020
+      Top             =   3552
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   20
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   25
+      Left            =   8250
+      Top             =   3552
+      Width           =   600
+      _ExtentX        =   1058
+      _ExtentY        =   974
+      Shape           =   21
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   17
+      Left            =   6090
+      Top             =   3552
+      Width           =   600
+      _ExtentX        =   1058
+      _ExtentY        =   974
+      Shape           =   19
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   16
+      Left            =   4860
+      Top             =   3552
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   18
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   15
+      Left            =   540
+      Top             =   3552
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   14
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   14
+      Left            =   1620
+      Top             =   3552
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   15
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   13
+      Left            =   2700
+      Top             =   3552
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   16
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   12
+      Left            =   3780
+      Top             =   3552
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   17
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   562
+      Index           =   5
+      Left            =   5940
+      Top             =   600
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   995
+      Shape           =   5
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   4
+      Left            =   4860
+      Top             =   600
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   4
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   562
+      Index           =   3
+      Left            =   3780
+      Top             =   600
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   995
+      Shape           =   3
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   2
+      Left            =   2700
+      Top             =   600
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   2
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   1
+      Left            =   1620
+      Top             =   600
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   1
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   0
+      Left            =   540
+      Top             =   600
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   7
+      Left            =   2700
+      Top             =   2256
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   8
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   8
+      Left            =   1620
+      Top             =   2256
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   7
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   28
+      Left            =   7070
+      Top             =   2256
+      Width           =   800
+      _ExtentX        =   1418
+      _ExtentY        =   974
+      Shape           =   12
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   27
+      Left            =   8100
+      Top             =   2256
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   13
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   11
+      Left            =   6090
+      Top             =   2256
+      Width           =   600
+      _ExtentX        =   1058
+      _ExtentY        =   974
+      Shape           =   11
+      FillColor       =   16744576
+      FillStyle       =   0
+      Shift           =   20
+      ShiftPutAutomatically=   20
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   10
+      Left            =   4860
+      Top             =   2256
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   10
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   9
+      Left            =   540
+      Top             =   2256
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   6
+      FillColor       =   16744576
+      FillStyle       =   0
+   End
+   Begin Proyect1.ShapeEx ShapeEx1 
+      Height          =   552
+      Index           =   6
+      Left            =   3780
+      Top             =   2256
+      Width           =   900
+      _ExtentX        =   1588
+      _ExtentY        =   974
+      Shape           =   9
+      FillColor       =   16744576
+      FillStyle       =   0
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -277,19 +668,6 @@ Begin VB.Form frmTest
       Top             =   7452
       Width           =   3792
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   29
-      Left            =   8100
-      Top             =   4848
-      Visible         =   0   'False
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      FillColor       =   16744576
-      FillStyle       =   0
-      ShiftPutAutomatically=   20
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -313,20 +691,6 @@ Begin VB.Form frmTest
       Top             =   2956
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   28
-      Left            =   7070
-      Top             =   2256
-      Width           =   800
-      _ExtentX        =   1418
-      _ExtentY        =   974
-      Shape           =   12
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -337,20 +701,6 @@ Begin VB.Form frmTest
       TabIndex        =   52
       Top             =   2956
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   27
-      Left            =   8100
-      Top             =   2256
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   13
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -363,20 +713,6 @@ Begin VB.Form frmTest
       Top             =   4252
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   26
-      Left            =   7020
-      Top             =   3552
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   20
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -388,32 +724,6 @@ Begin VB.Form frmTest
       Top             =   4252
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   25
-      Left            =   8250
-      Top             =   3552
-      Width           =   600
-      _ExtentX        =   1058
-      _ExtentY        =   974
-      Shape           =   21
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   24
-      Left            =   7220
-      Top             =   4848
-      Width           =   500
-      _ExtentX        =   889
-      _ExtentY        =   974
-      Shape           =   28
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -424,20 +734,6 @@ Begin VB.Form frmTest
       TabIndex        =   49
       Top             =   5548
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   23
-      Left            =   5940
-      Top             =   4848
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   27
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -497,30 +793,6 @@ Begin VB.Form frmTest
       Top             =   5548
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   22
-      Left            =   4860
-      Top             =   4848
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   26
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   21
-      Left            =   2950
-      Top             =   4848
-      Width           =   400
-      _ExtentX        =   699
-      _ExtentY        =   974
-      Shape           =   24
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -531,18 +803,6 @@ Begin VB.Form frmTest
       TabIndex        =   42
       Top             =   5548
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   20
-      Left            =   4030
-      Top             =   4848
-      Width           =   400
-      _ExtentX        =   699
-      _ExtentY        =   974
-      Shape           =   25
-      FillColor       =   16744576
-      FillStyle       =   0
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -566,19 +826,6 @@ Begin VB.Form frmTest
       Top             =   5548
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   19
-      Left            =   1870
-      Top             =   4848
-      Width           =   400
-      _ExtentX        =   699
-      _ExtentY        =   974
-      Shape           =   23
-      FillColor       =   16744576
-      FillStyle       =   0
-      ShiftPutAutomatically=   20
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -589,19 +836,6 @@ Begin VB.Form frmTest
       TabIndex        =   39
       Top             =   5548
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   18
-      Left            =   765
-      Top             =   4848
-      Width           =   450
-      _ExtentX        =   804
-      _ExtentY        =   974
-      Shape           =   22
-      FillColor       =   16744576
-      FillStyle       =   0
-      ShiftPutAutomatically=   20
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -787,18 +1021,6 @@ Begin VB.Form frmTest
       Top             =   7812
       Width           =   4152
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   17
-      Left            =   6090
-      Top             =   3552
-      Width           =   600
-      _ExtentX        =   1058
-      _ExtentY        =   974
-      Shape           =   19
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -809,20 +1031,6 @@ Begin VB.Form frmTest
       TabIndex        =   19
       Top             =   4252
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   16
-      Left            =   4860
-      Top             =   3552
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   18
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -835,20 +1043,6 @@ Begin VB.Form frmTest
       Top             =   4252
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   15
-      Left            =   540
-      Top             =   3552
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   14
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -859,18 +1053,6 @@ Begin VB.Form frmTest
       TabIndex        =   17
       Top             =   4252
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   14
-      Left            =   1620
-      Top             =   3552
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   15
-      FillColor       =   16744576
-      FillStyle       =   0
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -883,18 +1065,6 @@ Begin VB.Form frmTest
       Top             =   4252
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   13
-      Left            =   2700
-      Top             =   3552
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   16
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -905,20 +1075,6 @@ Begin VB.Form frmTest
       TabIndex        =   15
       Top             =   4252
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   12
-      Left            =   3780
-      Top             =   3552
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   17
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -931,20 +1087,6 @@ Begin VB.Form frmTest
       Top             =   4252
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   11
-      Left            =   6090
-      Top             =   2256
-      Width           =   600
-      _ExtentX        =   1058
-      _ExtentY        =   974
-      Shape           =   11
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -956,18 +1098,6 @@ Begin VB.Form frmTest
       Top             =   2956
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   10
-      Left            =   4860
-      Top             =   2256
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   10
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -978,18 +1108,6 @@ Begin VB.Form frmTest
       TabIndex        =   12
       Top             =   2956
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   9
-      Left            =   540
-      Top             =   2256
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   6
-      FillColor       =   16744576
-      FillStyle       =   0
    End
    Begin VB.Label Label1 
       Caption         =   "New shapes:"
@@ -1011,18 +1129,6 @@ Begin VB.Form frmTest
       Top             =   2956
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   8
-      Left            =   1620
-      Top             =   2256
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   7
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -1033,20 +1139,6 @@ Begin VB.Form frmTest
       TabIndex        =   9
       Top             =   2956
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   7
-      Left            =   2700
-      Top             =   2256
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   8
-      FillColor       =   16744576
-      FillStyle       =   0
-      Shift           =   20
-      ShiftPutAutomatically=   20
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -1059,18 +1151,6 @@ Begin VB.Form frmTest
       Top             =   2956
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   6
-      Left            =   3780
-      Top             =   2256
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   9
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -1082,18 +1162,6 @@ Begin VB.Form frmTest
       Top             =   2956
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   562
-      Index           =   5
-      Left            =   5940
-      Top             =   600
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   995
-      Shape           =   5
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -1104,18 +1172,6 @@ Begin VB.Form frmTest
       TabIndex        =   6
       Top             =   1300
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   4
-      Left            =   4860
-      Top             =   600
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   4
-      FillColor       =   16744576
-      FillStyle       =   0
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -1139,18 +1195,6 @@ Begin VB.Form frmTest
       Top             =   1300
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   562
-      Index           =   3
-      Left            =   3780
-      Top             =   600
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   995
-      Shape           =   3
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -1162,18 +1206,6 @@ Begin VB.Form frmTest
       Top             =   1300
       Width           =   1020
    End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   2
-      Left            =   2700
-      Top             =   600
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   2
-      FillColor       =   16744576
-      FillStyle       =   0
-   End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
@@ -1184,18 +1216,6 @@ Begin VB.Form frmTest
       TabIndex        =   2
       Top             =   1300
       Width           =   1020
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   1
-      Left            =   1620
-      Top             =   600
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   1
-      FillColor       =   16744576
-      FillStyle       =   0
    End
    Begin VB.Label Label2 
       Alignment       =   2  'Center
@@ -1216,17 +1236,6 @@ Begin VB.Form frmTest
       TabIndex        =   0
       Top             =   180
       Width           =   2208
-   End
-   Begin Proyect1.ShapeEx ShapeEx1 
-      Height          =   552
-      Index           =   0
-      Left            =   540
-      Top             =   600
-      Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      FillColor       =   16744576
-      FillStyle       =   0
    End
 End
 Attribute VB_Name = "frmTest"
@@ -1249,18 +1258,21 @@ End Sub
 Private Sub cboStyle3D_Click()
     Dim iCtl As Control
     
-    If cboStyle3D.ListIndex = -1 Then Exit Sub
-    If cboStyle3DEffect.ListIndex = -1 Then Exit Sub
-    
     For Each iCtl In Me.Controls
         If TypeName(iCtl) = "ShapeEx" Then
-            iCtl.Style3D = cboStyle3D.ListIndex Or (cboStyle3DEffect.ItemData(cboStyle3DEffect.ListIndex))
+            iCtl.Style3D = cboStyle3D.ListIndex
         End If
     Next
 End Sub
 
 Private Sub cboStyle3DEffect_Click()
-    cboStyle3D_Click
+    Dim iCtl As Control
+    
+    For Each iCtl In Me.Controls
+        If TypeName(iCtl) = "ShapeEx" Then
+            iCtl.Style3DEffect = cboStyle3DEffect.ListIndex
+        End If
+    Next
 End Sub
 
 Private Sub chkAutoRotation_Click()
@@ -1291,8 +1303,8 @@ Private Sub Form_Load()
     cboBorderStyle.ListIndex = 1
     cboStyle3DEffect.ItemData(1) = 4
     cboStyle3DEffect.ItemData(2) = 8
-    cboStyle3DEffect.ListIndex = 0
     cboStyle3D.ListIndex = 0
+    cboStyle3DEffect.ListIndex = 0
 End Sub
 
 Private Sub sldOpacity_Change()
