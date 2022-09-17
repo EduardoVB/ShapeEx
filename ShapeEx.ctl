@@ -1,7 +1,6 @@
 VERSION 5.00
 Begin VB.UserControl ShapeEx 
    BackStyle       =   0  'Transparent
-   CanGetFocus     =   0   'False
    ClientHeight    =   2880
    ClientLeft      =   0
    ClientTop       =   0
@@ -79,9 +78,9 @@ Private Type XFORM
     eDy As Single
 End Type
 
-Private Declare Function SetGraphicsMode Lib "gdi32" (ByVal hdc As Long, ByVal iMode As Long) As Long
-Private Declare Function SetWorldTransform Lib "gdi32" (ByVal hdc As Long, lpXform As XFORM) As Long
-Private Declare Function ModifyWorldTransform Lib "gdi32" (ByVal hdc As Long, lpXform As XFORM, ByVal iMode As Long) As Long
+Private Declare Function SetGraphicsMode Lib "gdi32" (ByVal hDC As Long, ByVal iMode As Long) As Long
+Private Declare Function SetWorldTransform Lib "gdi32" (ByVal hDC As Long, lpXform As XFORM) As Long
+Private Declare Function ModifyWorldTransform Lib "gdi32" (ByVal hDC As Long, lpXform As XFORM, ByVal iMode As Long) As Long
 Private Const MWT_IDENTITY = 1
 Private Const MWT_LEFTMULTIPLY = 2
 'Private Const MWT_RIGHTMULTIPLY = 3
@@ -94,10 +93,10 @@ Private Const Pi = 3.14159265358979
 Private Const WM_USER As Long = &H400
 Private Const WM_INVALIDATE As Long = WM_USER + 11 ' custom message
 
-Private Declare Function GetClipRgn Lib "gdi32" (ByVal hdc As Long, ByVal hRgn As Long) As Long
+Private Declare Function GetClipRgn Lib "gdi32" (ByVal hDC As Long, ByVal hRgn As Long) As Long
 Private Declare Function GetRgnBox Lib "gdi32" (ByVal hRgn As Long, lpRect As RECT) As Long
 Private Declare Function CreateRectRgn Lib "gdi32" (ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
-Private Declare Function SelectClipRgn Lib "gdi32" (ByVal hdc As Long, ByVal hRgn As Long) As Long
+Private Declare Function SelectClipRgn Lib "gdi32" (ByVal hDC As Long, ByVal hRgn As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function InvalidateRectAsNull Lib "user32" Alias "InvalidateRect" (ByVal hWnd As Long, ByVal lpRect As Long, ByVal bErase As Long) As Long
 'Private Declare Function GetUpdateRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT, ByVal bErase As Long) As Long
@@ -124,7 +123,7 @@ Private Type POINTL
     Y As Long
 End Type
 
-Private Declare Function GdipCreateFromHDC Lib "gdiplus" (ByVal hdc As Long, ByRef graphics As Long) As Long
+Private Declare Function GdipCreateFromHDC Lib "gdiplus" (ByVal hDC As Long, ByRef graphics As Long) As Long
 Private Declare Function GdipDeleteGraphics Lib "gdiplus" (ByVal graphics As Long) As Long
 Private Declare Function GdiplusStartup Lib "gdiplus" (ByRef token As Long, ByRef lpInput As GDIPlusStartupInput, Optional ByRef lpOutput As Any) As Long
 Private Declare Function GdiplusShutdown Lib "gdiplus" (ByVal token As Long) As Long
@@ -145,15 +144,19 @@ Private Declare Function GdipFillPolygonI Lib "gdiplus" (ByVal graphics As Long,
 Private Declare Function GdipDrawClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, Points As Any, ByVal Count As Long, ByVal tension As Single) As Long
 Private Declare Function GdipFillClosedCurve2I Lib "gdiplus" (ByVal graphics As Long, ByVal Brush As Long, Points As Any, ByVal Count As Long, ByVal tension As Single, ByVal FillMode As Long) As Long
 Private Declare Function GdipSetPenDashStyle Lib "gdiplus" (ByVal pen As Long, ByVal dStyle As Long) As Long
-Private Declare Function GdipCreatePath Lib "GdiPlus.dll" (ByVal mBrushMode As Long, ByRef mPath As Long) As Long
-Private Declare Function GdipAddPathEllipseI Lib "GdiPlus.dll" (ByVal mPath As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long) As Long
-Private Declare Function GdipDeletePath Lib "GdiPlus.dll" (ByVal mPath As Long) As Long
+Private Declare Function GdipCreatePath Lib "GdiPlus.dll" (ByVal mBrushMode As Long, ByRef mpath As Long) As Long
+Private Declare Function GdipAddPathEllipseI Lib "GdiPlus.dll" (ByVal mpath As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long) As Long
+Private Declare Function GdipDeletePath Lib "GdiPlus.dll" (ByVal mpath As Long) As Long
 Private Declare Function GdipSetPathGradientCenterColor Lib "GdiPlus.dll" (ByVal mBrush As Long, ByVal mColors As Long) As Long
 Private Declare Function GdipSetPathGradientSurroundColorsWithCount Lib "GdiPlus.dll" (ByVal mBrush As Long, ByRef mColor As Long, ByRef mCount As Long) As Long
-Private Declare Function GdipCreatePathGradientFromPath Lib "GdiPlus.dll" (ByVal mPath As Long, ByRef mPolyGradient As Long) As Long
+Private Declare Function GdipCreatePathGradientFromPath Lib "GdiPlus.dll" (ByVal mpath As Long, ByRef mPolyGradient As Long) As Long
 Private Declare Function GdipCreatePathGradientI Lib "gdiplus" (Points As POINTL, ByVal Count As Long, ByVal WrapMd As Long, polyGradient As Long) As Long
-
-
+Private Declare Function GdipAddPathArcI Lib "GdiPlus.dll" (ByVal mpath As Long, ByVal mX As Long, ByVal mY As Long, ByVal mWidth As Long, ByVal mHeight As Long, ByVal mStartAngle As Single, ByVal mSweepAngle As Single) As Long
+Private Declare Function GdipClosePathFigure Lib "GdiPlus.dll" (ByVal mpath As Long) As Long
+Private Declare Function GdipDrawPath Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mPen As Long, ByVal mpath As Long) As Long
+Private Declare Function GdipFillPath Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mBrush As Long, ByVal mpath As Long) As Long
+Private Declare Function GdipDrawPieI Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, ByVal startAngle As Single, ByVal sweepAngle As Single) As Long
+                              
 Private Enum FillModeConstants
     FillModeAlternate = &H0
     FillModeWinding = &H1
@@ -177,108 +180,126 @@ Attribute MouseMove.VB_UserMemId = -606
 Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Attribute MouseUp.VB_UserMemId = -604
 
-Public Enum veShapeConstants
-    veShapeRectangle = vbShapeRectangle ' 0
-    veShapeSquare = vbShapeSquare ' 1
-    veShapeOval = vbShapeOval ' 2
-    veShapeCircle = vbShapeCircle ' 3
-    veShapeRoundedRectangle = vbShapeRoundedRectangle ' 4
-    veShapeRoundedSquare = vbShapeRoundedSquare ' 5
-    veShapeTriangleEquilateral = 6
-    veShapeTriangleIsosceles = 7
-    veShapeTriangleScalene = 8
-    veShapeTriangleRight = 9
-    veShapeRhombus = 10
-    veShapeKite = 11
-    veShapeDiamond = 12
-    veShapeTrapezoid = 13
-    veShapeParalellogram = 14
-    veShapeSemicircle = 15
-    veShapeRegularPolygon = 16
-    veShapeStar = 17
-    veShapeJaggedStar = 18
-    veShapeHeart = 19
-    veShapeArrow = 20
-    veShapeCrescent = 21
-    veShapeDrop = 22
-    veShapeEgg = 23
-    veShapeLocation = 24
-    veShapeSpeaker = 25
-    veShapeCloud = 26
-    veShapeTalk = 27
-    veShapeShield = 28
+Public Enum SEShapeConstants
+    seShapeRectangle = vbShapeRectangle ' 0
+    seShapeSquare = vbShapeSquare ' 1
+    seShapeOval = vbShapeOval ' 2
+    seShapeCircle = vbShapeCircle ' 3
+    seShapeRoundedRectangle = vbShapeRoundedRectangle ' 4
+    seShapeRoundedSquare = vbShapeRoundedSquare ' 5
+    seShapeTriangleEquilateral = 6
+    seShapeTriangleIsosceles = 7
+    seShapeTriangleScalene = 8
+    seShapeTriangleRight = 9
+    seShapeRhombus = 10
+    seShapeKite = 11
+    seShapeDiamond = 12
+    seShapeTrapezoid = 13
+    seShapeParalellogram = 14
+    seShapeSemicircle = 15
+    seShapeRegularPolygon = 16
+    seShapeStar = 17
+    seShapeJaggedStar = 18
+    seShapeHeart = 19
+    seShapeArrow = 20
+    seShapeCrescent = 21
+    seShapeDrop = 22
+    seShapeEgg = 23
+    seShapeLocation = 24
+    seShapeSpeaker = 25
+    seShapeCloud = 26
+    seShapeTalk = 27
+    seShapeShield = 28
+    seShapePie = 29
 End Enum
 
-Public Enum veBackStyleConstants
-    veTransparent = 0
-    veOpaque = 1
+Public Enum SEBackStyleConstants
+    seTransparent = 0
+    seOpaque = 1
 End Enum
 
-Public Enum veFillStyle2Constants
-    veFSTransparent = vbFSTransparent
-    veFSSolid = vbFSSolid
+Public Enum SEFillStyle2Constants
+    seFSSolid = vbFSSolid
+    seFSTransparent = vbFSTransparent
 End Enum
 
-Public Enum veQualityConstants
-    veQualityLow = 0
-    veQualityHigh = 1
+Public Enum SEQualityConstants
+    seQualityLow = 0
+    seQualityHigh = 1
 End Enum
 
-Public Enum veStyle3DConstants
-    veStyle3DNone = 0
-    veStyle3DLight = 1
-    veStyle3DShadow = 2
-    veStyle3DBoth = 3
+Public Enum SEStyle3DConstants
+    seStyle3DNone = 0
+    seStyle3DLight = 1
+    seStyle3DShadow = 2
+    seStyle3DBoth = 3
 End Enum
 
-Public Enum veStyle3DEffectConstants
-    veStyle3EffectAuto = 0
-    veStyle3EffectDiffuse = 1
-    veStyle3EffectGem = 2
+Public Enum SEStyle3DEffectConstants
+    seStyle3EffectAuto = 0
+    seStyle3EffectDiffuse = 1
+    seStyle3EffectGem = 2
 End Enum
+
+Public Enum SEFlippedConstants
+    seFlippedNo = 0
+    seFlippedHorizontally = 1
+    seFlippedVertically = 2
+    seFlippedBoth = 3
+End Enum
+
+Public Enum SESubclassingConstants
+    seSCNo = 0 ' never ' In most cases subclassing is not necessary (and without subclassing is safer for running in the IDE), but in some special cases when the figure needs to be painted outside the control bounds, it may experience glitches.
+    seSCYes = 1 ' always
+    seSCNotInIDE = 2 ' compiled will use subclassing
+    seSCNotInIDEDesignTime = 3 ' IDE run time and compiled will use subclassing
+End Enum
+
 
 ' Property defaults
-Private Const mdef_BackColor = vbButtonFace
-Private Const mdef_BackStyle = veTransparent
+Private Const mdef_BackColor = vbWindowBackground
+Private Const mdef_BackStyle = seTransparent
 Private Const mdef_BorderColor = vbWindowText
-Private Const mdef_Shape = veShapeRectangle
+Private Const mdef_Shape = seShapeRectangle
 Private Const mdef_FillColor = vbBlack
 Private Const mdef_FillStyle = vbFSTransparent
 Private Const mdef_BorderStyle = vbBSSolid
 Private Const mdef_BorderWidth = 1
 Private Const mdef_Clickable = True
-Private Const mdef_Quality = veQualityHigh
+Private Const mdef_Quality = seQualityHigh
 Private Const mdef_RotationDegrees = 0
 Private Const mdef_Opacity = 100
 Private Const mdef_Shift = 0
 Private Const mdef_Vertices = 5
 Private Const mdef_CurvingFactor = 0
-Private Const mdef_Mirrored = False
+Private Const mdef_Flipped = seFlippedNo
 Private Const mdef_MousePointer = vbDefault
-Private Const mdef_Style3D = veStyle3DNone
-Private Const mdef_Style3DEffect = veStyle3EffectAuto
+Private Const mdef_Style3D = seStyle3DNone
+Private Const mdef_Style3DEffect = seStyle3EffectAuto
+Private Const mdef_UseSubclassing = seSCNotInIDEDesignTime ' seSCYes
 
 ' Properties
 Private mBackColor  As Long
-Private mBackStyle As veBackStyleConstants
+Private mBackStyle As SEBackStyleConstants
 Private mBorderColor As Long
-Private mShape As veShapeConstants
+Private mShape As SEShapeConstants
 Private mFillColor As Long
 Private mFillStyle  As Long
 Private mBorderStyle  As BorderStyleConstants
 Private mBorderWidth  As Integer
 Private mClickable As Boolean
-Private mQuality As veQualityConstants
+Private mQuality As SEQualityConstants
 Private mRotationDegrees As Single
 Private mOpacity As Single
 Private mShift As Single
 Private mVertices As Integer
 Private mCurvingFactor As Integer
-Private mMirrored As Boolean
+Private mFlipped As SEFlippedConstants
 Private mMousePointer As Integer
 Private mMouseIcon As StdPicture
-Private mStyle3D As veStyle3DConstants
-Private mStyle3DEffect As veStyle3DEffectConstants
+Private mStyle3D As SEStyle3DConstants
+Private mStyle3DEffect As SEStyle3DEffectConstants
+Private mUseSubclassing As SESubclassingConstants
 
 Private mGdipToken As Long
 Private mContainerHwnd As Long
@@ -286,6 +307,8 @@ Private mAttached As Boolean
 Private mShiftPutAutomatically As Single
 Private mCurvingFactor2 As Single
 Private mUserMode As Boolean
+Private mSubclassed As Boolean
+Private mDrawingOutsideUC As Boolean
 
 Private Sub tmrPainting_Timer()
     tmrPainting.Enabled = False
@@ -329,11 +352,12 @@ Private Sub UserControl_InitProperties()
     mShift = mdef_Shift
     mVertices = mdef_Vertices
     mCurvingFactor = mdef_CurvingFactor
-    mMirrored = mdef_Mirrored
+    mFlipped = mdef_Flipped
     mMousePointer = mdef_MousePointer
     Set mMouseIcon = Nothing
     mStyle3D = mdef_Style3D
     mStyle3DEffect = mdef_Style3DEffect
+    mUseSubclassing = mdef_UseSubclassing
     
     On Error Resume Next
     mContainerHwnd = UserControl.ContainerHwnd
@@ -341,6 +365,14 @@ Private Sub UserControl_InitProperties()
     On Error GoTo 0
     SetCurvingFactor2
     pvSubclass
+End Sub
+
+Private Sub UserControl_KeyPress(KeyAscii As Integer)
+    If mClickable Then
+        If (KeyAscii = vbKeySpace) Then
+            UserControl_Click
+        End If
+    End If
 End Sub
 
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -371,19 +403,23 @@ Private Sub UserControl_Paint()
     Static sTheLastTimeWasExpanded As Boolean
     Dim iAuxExpand As Long
     
-    If (mRotationDegrees > 0) Or mMirrored Then
-        iGMPrev = SetGraphicsMode(UserControl.hdc, GM_ADVANCED)
-        ModifyWorldTransform UserControl.hdc, mtx1, MWT_IDENTITY
+    If (mRotationDegrees > 0) Or (mFlipped <> seFlippedNo) Then
+        iGMPrev = SetGraphicsMode(UserControl.hDC, GM_ADVANCED)
+        ModifyWorldTransform UserControl.hDC, mtx1, MWT_IDENTITY
         If mRotationDegrees = 0 Then
             c = 1
             s = 0
         Else
             c = Cos(-mRotationDegrees / 360 * 2 * Pi)
-            s = Sin(-mRotationDegrees / 360 * 2 * Pi)
+            s = sIn(-mRotationDegrees / 360 * 2 * Pi)
         End If
         mtx1.eM11 = c: mtx1.eM12 = s: mtx1.eM21 = -s: mtx1.eM22 = c: mtx1.eDx = (UserControl.ScaleWidth - 1) / 2: mtx1.eDy = (UserControl.ScaleHeight - 1) / 2
-        If mMirrored Then
+        If mFlipped = seFlippedHorizontally Then
             mtx2.eM11 = -1: mtx2.eM22 = 1: mtx2.eDx = (UserControl.ScaleWidth - 1) / 2: mtx2.eDy = -(UserControl.ScaleHeight - 1) / 2
+        ElseIf mFlipped = seFlippedVertically Then
+            mtx2.eM11 = 1: mtx2.eM22 = -1: mtx2.eDx = -(UserControl.ScaleWidth - 1) / 2: mtx2.eDy = (UserControl.ScaleHeight - 1) / 2
+        ElseIf mFlipped = seFlippedBoth Then
+            mtx2.eM11 = -1: mtx2.eM22 = -1: mtx2.eDx = (UserControl.ScaleWidth - 1) / 2: mtx2.eDy = (UserControl.ScaleHeight - 1) / 2
         Else
             mtx2.eM11 = 1: mtx2.eM22 = 1: mtx2.eDx = -(UserControl.ScaleWidth - 1) / 2: mtx2.eDy = -(UserControl.ScaleHeight - 1) / 2
         End If
@@ -396,13 +432,13 @@ Private Sub UserControl_Paint()
             iExpandForPen = iAuxExpand
         End If
     End If
-    If (mShape > veShapeRoundedSquare) Then
+    If (mShape > seShapeRoundedSquare) Then
         If UserControl.ScaleWidth > UserControl.ScaleHeight Then
             iAuxExpand = UserControl.ScaleWidth / UserControl.ScaleHeight * mBorderWidth
         Else
             iAuxExpand = UserControl.ScaleHeight / UserControl.ScaleWidth * mBorderWidth
         End If
-        If (mShape = veShapeStar) Or (mShape = veShapeJaggedStar) Then
+        If (mShape = seShapeStar) Or (mShape = seShapeJaggedStar) Then
             iExpandForPen = iExpandForPen * mVertices / 6
         End If
         If iAuxExpand > iExpandForPen Then
@@ -437,7 +473,7 @@ Private Sub UserControl_Paint()
         iExpandOutsideForCurve = (UserControl.Width ^ 2 + UserControl.Height ^ 2) ^ 0.5 * 1.2
     End If
     If (mRotationDegrees <> 0) Then
-        If (mShape <> veShapeCircle) And (mShape <> veShapeStar) And (mShape <> veShapeJaggedStar) Then
+        If (mShape <> seShapeCircle) And (mShape <> seShapeStar) And (mShape <> seShapeJaggedStar) Then
             iLng = Abs((UserControl.Width - UserControl.Height) / 2)
             iLng2 = (UserControl.Width ^ 2 + UserControl.Height ^ 2) ^ 0.5
             If iLng < iLng2 Then
@@ -448,8 +484,9 @@ Private Sub UserControl_Paint()
         End If
     End If
     
+    mDrawingOutsideUC = False
     hRgn = CreateRectRgn(0, 0, 0, 0)
-    If GetClipRgn(UserControl.hdc, hRgn) = 0& Then  ' hDc is one passed to Paint
+    If GetClipRgn(UserControl.hDC, hRgn) = 0& Then  ' hDc is one passed to Paint
         DeleteObject hRgn: hRgn = 0
     Else
         GetRgnBox hRgn, rgnRect             ' get its bounds & adjust our region accordingly (i.e.,expand 1 pixel)
@@ -458,30 +495,32 @@ Private Sub UserControl_Paint()
         If (iExpandForPen <> 0) Or (iExpandOutsideForAngle <> 0) Or (iExpandOutsideForFigure <> 0) Or sTheLastTimeWasExpanded Then
             hRgnExpand = CreateRectRgn(rgnRect.Left - iExpandForPen - iExpandOutsideForAngle - iExpandOutsideForFigure, rgnRect.Top - iExpandForPen - iExpandOutsideForAngle - iExpandOutsideForFigure, rgnRect.Right + iExpandForPen + iExpandOutsideForAngle + iExpandOutsideForFigure, rgnRect.Bottom + iExpandForPen + iExpandOutsideForAngle + iExpandOutsideForFigure)
         
-            SelectClipRgn UserControl.hdc, hRgnExpand
+            SelectClipRgn UserControl.hDC, hRgnExpand
             DeleteObject hRgnExpand
             If Not tmrPainting.Enabled Then
-                If mContainerHwnd <> 0 Then
+                If (mContainerHwnd <> 0) And mSubclassed Then
                     PostMessage mContainerHwnd, WM_INVALIDATE, 0&, 0&
                 End If
             End If
+            mDrawingOutsideUC = True
         End If
     End If
     sTheLastTimeWasExpanded = (iExpandForPen <> 0) Or (iExpandOutsideForAngle <> 0) Or (iExpandOutsideForFigure <> 0)
+    tmrPainting.Enabled = False
     tmrPainting.Enabled = True
     
-    If (mRotationDegrees > 0) Or mMirrored Then
-        SetWorldTransform UserControl.hdc, mtx1
-        ModifyWorldTransform UserControl.hdc, mtx2, MWT_LEFTMULTIPLY
+    If (mRotationDegrees > 0) Or (mFlipped <> seFlippedNo) Then
+        SetWorldTransform UserControl.hDC, mtx1
+        ModifyWorldTransform UserControl.hDC, mtx2, MWT_LEFTMULTIPLY
     End If
     
     Draw
     
-    If hRgnExpand <> 0 Then SelectClipRgn UserControl.hdc, hRgn  ' restore original clip region
+    If hRgnExpand <> 0 Then SelectClipRgn UserControl.hDC, hRgn  ' restore original clip region
     If hRgn <> 0 Then DeleteObject hRgn
     
-    If (mRotationDegrees > 0) Or mMirrored Then
-        SetGraphicsMode UserControl.hdc, iGMPrev
+    If (mRotationDegrees > 0) Or (mFlipped <> seFlippedNo) Then
+        SetGraphicsMode UserControl.hDC, iGMPrev
     End If
 End Sub
 
@@ -502,11 +541,12 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     mShiftPutAutomatically = PropBag.ReadProperty("ShiftPutAutomatically", 0)
     mVertices = PropBag.ReadProperty("Vertices", mdef_Vertices)
     mCurvingFactor = PropBag.ReadProperty("CurvingFactor", mdef_CurvingFactor)
-    mMirrored = PropBag.ReadProperty("Mirrored", mdef_Mirrored)
+    mFlipped = PropBag.ReadProperty("Flipped", mdef_Flipped)
     mMousePointer = PropBag.ReadProperty("MousePointer", mdef_MousePointer)
     Set mMouseIcon = PropBag.ReadProperty("MouseIcon", Nothing)
     mStyle3D = PropBag.ReadProperty("Style3D", mdef_Style3D)
     mStyle3DEffect = PropBag.ReadProperty("Style3DEffect", mdef_Style3DEffect)
+    mUseSubclassing = PropBag.ReadProperty("UseSubclassing", mdef_UseSubclassing)
     
     UserControl.MousePointer = mMousePointer
     Set UserControl.MouseIcon = mMouseIcon
@@ -545,11 +585,12 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "ShiftPutAutomatically", mShiftPutAutomatically, 0
     PropBag.WriteProperty "Vertices", mVertices, mdef_Vertices
     PropBag.WriteProperty "CurvingFactor", mCurvingFactor, mdef_CurvingFactor
-    PropBag.WriteProperty "Mirrored", mMirrored, mdef_Mirrored
+    PropBag.WriteProperty "Flipped", mFlipped, mdef_Flipped
     PropBag.WriteProperty "MousePointer", mMousePointer, mdef_MousePointer
     PropBag.WriteProperty "MouseIcon", mMouseIcon, Nothing
     PropBag.WriteProperty "Style3D", mStyle3D, mdef_Style3D
     PropBag.WriteProperty "Style3DEffect", mStyle3DEffect, mdef_Style3DEffect
+    PropBag.WriteProperty "UseSubclassing", mUseSubclassing, mdef_UseSubclassing
 End Sub
 
 
@@ -569,15 +610,15 @@ Public Property Let BorderColor(ByVal nValue As OLE_COLOR)
 End Property
 
 
-Public Property Get Shape() As veShapeConstants
+Public Property Get Shape() As SEShapeConstants
 Attribute Shape.VB_Description = "Returns/sets a value indicating the appearance of a control."
 Attribute Shape.VB_ProcData.VB_Invoke_Property = ";Apariencia"
     Shape = mShape
 End Property
 
-Public Property Let Shape(ByVal nValue As veShapeConstants)
+Public Property Let Shape(ByVal nValue As SEShapeConstants)
     If nValue <> mShape Then
-        If (nValue < veShapeRectangle) Or (nValue > veShapeShield) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < seShapeRectangle) Or (nValue > seShapePie) Then Err.Raise 380, TypeName(Me): Exit Property
         If ShapeHasShift(mShape) Then
             If mShift = mShiftPutAutomatically Then
                 mShift = 0
@@ -596,9 +637,9 @@ Public Property Let Shape(ByVal nValue As veShapeConstants)
     End If
 End Property
 
-Private Function ShapeHasShift(nShape As veShapeConstants) As Boolean
+Private Function ShapeHasShift(nShape As SEShapeConstants) As Boolean
     Select Case nShape
-        Case veShapeTriangleScalene, veShapeKite, veShapeDiamond, veShapeTrapezoid, veShapeParalellogram, veShapeArrow, veShapeStar, veShapeJaggedStar, veShapeTalk, veShapeCrescent
+        Case seShapeTriangleScalene, seShapeKite, seShapeDiamond, seShapeTrapezoid, seShapeParalellogram, seShapeArrow, seShapeStar, seShapeJaggedStar, seShapeTalk, seShapeCrescent
             ShapeHasShift = True
     End Select
 End Function
@@ -619,14 +660,14 @@ Public Property Let BackColor(ByVal nValue As OLE_COLOR)
 End Property
 
 
-Public Property Get BackStyle() As veBackStyleConstants
+Public Property Get BackStyle() As SEBackStyleConstants
 Attribute BackStyle.VB_Description = "Indicates whether a Label or the background of a Shape is transparent or opaque."
 Attribute BackStyle.VB_ProcData.VB_Invoke_Property = ";Apariencia"
 Attribute BackStyle.VB_UserMemId = -502
     BackStyle = mBackStyle
 End Property
 
-Public Property Let BackStyle(ByVal nValue As veBackStyleConstants)
+Public Property Let BackStyle(ByVal nValue As SEBackStyleConstants)
     If nValue <> mBackStyle Then
         mBackStyle = nValue
         Me.Refresh
@@ -651,16 +692,16 @@ Public Property Let FillColor(ByVal nValue As OLE_COLOR)
 End Property
 
 
-Public Property Get FillStyle() As veFillStyle2Constants
+Public Property Get FillStyle() As SEFillStyle2Constants
 Attribute FillStyle.VB_Description = "Returns/sets the fill style of a shape."
 Attribute FillStyle.VB_ProcData.VB_Invoke_Property = ";Apariencia"
 Attribute FillStyle.VB_UserMemId = -511
     FillStyle = mFillStyle
 End Property
 
-Public Property Let FillStyle(ByVal nValue As veFillStyle2Constants)
+Public Property Let FillStyle(ByVal nValue As SEFillStyle2Constants)
     If nValue <> mFillStyle Then
-        If (nValue < veFSSolid) Or (nValue > veFSTransparent) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < seFSSolid) Or (nValue > seFSTransparent) Then Err.Raise 380, TypeName(Me): Exit Property
         mFillStyle = nValue
         Me.Refresh
         PropertyChanged "FillStyle"
@@ -717,12 +758,12 @@ Public Property Let Clickable(ByVal nValue As Boolean)
 End Property
 
 
-Public Property Get Quality() As veQualityConstants
+Public Property Get Quality() As SEQualityConstants
 Attribute Quality.VB_ProcData.VB_Invoke_Property = ";Apariencia"
     Quality = mQuality
 End Property
 
-Public Property Let Quality(ByVal nValue As veQualityConstants)
+Public Property Let Quality(ByVal nValue As SEQualityConstants)
     If nValue <> mQuality Then
         mQuality = nValue
         Me.Refresh
@@ -751,6 +792,11 @@ Public Property Let RotationDegrees(ByVal nValue As Single)
         If nValue <> mRotationDegrees Then
             mRotationDegrees = nValue
             Me.Refresh
+            If mDrawingOutsideUC Then
+                If (mContainerHwnd <> 0) And mSubclassed Then
+                    PostMessage mContainerHwnd, WM_INVALIDATE, 0&, 0&
+                End If
+            End If
             PropertyChanged "RotationDegrees"
         End If
     End If
@@ -771,6 +817,11 @@ Public Property Let Opacity(ByVal nValue As Single)
         If nValue <> mOpacity Then
             mOpacity = nValue
             Me.Refresh
+            If mDrawingOutsideUC Then
+                If (mContainerHwnd <> 0) And mSubclassed Then
+                    PostMessage mContainerHwnd, WM_INVALIDATE, 0&, 0&
+                End If
+            End If
             PropertyChanged "Opacity"
         End If
     End If
@@ -816,20 +867,25 @@ Public Property Let CurvingFactor(ByVal nValue As Integer)
         If mCurvingFactor > 100 Then mCurvingFactor = 100
         SetCurvingFactor2
         Me.Refresh
+        If mDrawingOutsideUC Then
+            If (mContainerHwnd <> 0) And mSubclassed Then
+                PostMessage mContainerHwnd, WM_INVALIDATE, 0&, 0&
+            End If
+        End If
         PropertyChanged "CurvingFactor"
     End If
 End Property
 
 
-Public Property Get Mirrored() As Boolean
-    Mirrored = mMirrored
+Public Property Get Flipped() As SEFlippedConstants
+    Flipped = mFlipped
 End Property
 
-Public Property Let Mirrored(ByVal nValue As Boolean)
-    If nValue <> mMirrored Then
-        mMirrored = nValue
+Public Property Let Flipped(ByVal nValue As SEFlippedConstants)
+    If nValue <> mFlipped Then
+        mFlipped = nValue
         Me.Refresh
-        PropertyChanged "Mirrored"
+        PropertyChanged "Flipped"
     End If
 End Property
 
@@ -864,13 +920,13 @@ Public Property Set MouseIcon(ByVal nValue As StdPicture)
 End Property
 
 
-Public Property Get Style3D() As veStyle3DConstants
+Public Property Get Style3D() As SEStyle3DConstants
     Style3D = mStyle3D
 End Property
 
-Public Property Let Style3D(ByVal nValue As veStyle3DConstants)
+Public Property Let Style3D(ByVal nValue As SEStyle3DConstants)
     If nValue <> mStyle3D Then
-        If (nValue < veStyle3DNone) Or (nValue > veStyle3DBoth) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < seStyle3DNone) Or (nValue > seStyle3DBoth) Then Err.Raise 380, TypeName(Me): Exit Property
         mStyle3D = nValue
         Me.Refresh
         PropertyChanged "Style3D"
@@ -878,16 +934,55 @@ Public Property Let Style3D(ByVal nValue As veStyle3DConstants)
 End Property
 
 
-Public Property Get Style3DEffect() As veStyle3DEffectConstants
+Public Property Get Style3DEffect() As SEStyle3DEffectConstants
     Style3DEffect = mStyle3DEffect
 End Property
 
-Public Property Let Style3DEffect(ByVal nValue As veStyle3DEffectConstants)
+Public Property Let Style3DEffect(ByVal nValue As SEStyle3DEffectConstants)
     If nValue <> mStyle3DEffect Then
-        If (nValue < veStyle3EffectAuto) Or (nValue > veStyle3EffectGem) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < seStyle3EffectAuto) Or (nValue > seStyle3EffectGem) Then Err.Raise 380, TypeName(Me): Exit Property
         mStyle3DEffect = nValue
         Me.Refresh
         PropertyChanged "Style3DEffect"
+    End If
+End Property
+
+
+Public Property Get UseSubclassing() As SESubclassingConstants
+    UseSubclassing = mUseSubclassing
+End Property
+
+Public Property Let UseSubclassing(ByVal nValue As SESubclassingConstants)
+    Dim iMessage As T_MSG
+    
+    If nValue <> mUseSubclassing Then
+        If Not mUserMode Then
+            If nValue = seSCNo Then
+                MsgBox "In most cases subclassing is not necessary (and without subclassing is safer for running in the IDE), but in some special cases when the figure needs to be painted outside the control bounds, it may experience glitches.", vbInformation
+            End If
+        End If
+        mUseSubclassing = nValue
+        If mUseSubclassing <> seSCNo Then
+            If mSubclassed Then pvUnsubclass
+            pvSubclass
+            If mSubclassed Then
+                If mDrawingOutsideUC Then
+                    If (mContainerHwnd <> 0) And mSubclassed Then
+                        PostMessage mContainerHwnd, WM_INVALIDATE, 0&, 0&
+                    End If
+                End If
+            Else
+                If mContainerHwnd <> 0 Then
+                    PeekMessage iMessage, mContainerHwnd, WM_INVALIDATE, WM_INVALIDATE, PM_REMOVE  ' remove posted message, if any
+                End If
+            End If
+        Else
+            If mSubclassed Then pvUnsubclass
+            If mContainerHwnd <> 0 Then
+                PeekMessage iMessage, mContainerHwnd, WM_INVALIDATE, WM_INVALIDATE, PM_REMOVE  ' remove posted message, if any
+            End If
+        End If
+        PropertyChanged "UseSubclassing"
     End If
 End Property
 
@@ -921,12 +1016,12 @@ Private Sub Draw()
     Dim iHalfBorderWidth As Long
     
     If mGdipToken = 0 Then InitGDI
-    If GdipCreateFromHDC(UserControl.hdc, iGraphics) = 0 Then
+    If GdipCreateFromHDC(UserControl.hDC, iGraphics) = 0 Then
         
-        If mFillStyle = veFSSolid Then
+        If mFillStyle = seFSSolid Then
             iFilled = True
             iFillColor = mFillColor
-        ElseIf mBackStyle = veOpaque Then
+        ElseIf mBackStyle = seOpaque Then
             iFilled = True
             iFillColor = mBackColor
         Else
@@ -936,14 +1031,14 @@ Private Sub Draw()
         iUCWidth = UserControl.ScaleWidth - 1
         iUCHeight = UserControl.ScaleHeight - 1
         
-        If mShape = veShapeOval Then
+        If mShape = seShapeOval Then
             If iFilled Then
                 FillEllipse iGraphics, iFillColor, 0, 0, iUCWidth, iUCHeight
             End If
             If mBorderStyle <> vbTransparent Then
                 DrawEllipse iGraphics, mBorderColor, mBorderWidth, 0, 0, iUCWidth, iUCHeight
             End If
-        ElseIf mShape = veShapeCircle Then
+        ElseIf mShape = seShapeCircle Then
             If iUCWidth < iUCHeight Then
                 iDiameter = iUCWidth
             Else
@@ -955,7 +1050,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iDiameter / 2, iUCHeight / 2 - iDiameter / 2, iDiameter, iDiameter
             End If
-        ElseIf mShape = veShapeSquare Then
+        ElseIf mShape = seShapeSquare Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
                 iHeight = iUCWidth
             Else
@@ -990,7 +1085,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeRoundedRectangle Then
+        ElseIf mShape = seShapeRoundedRectangle Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
                 iRoundSize = UserControl.ScaleWidth * 0.125
             Else
@@ -1002,8 +1097,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawRoundRect iGraphics, mBorderColor, mBorderWidth, 0, 0, iUCWidth, iUCHeight, iRoundSize
             End If
-            
-        ElseIf mShape = veShapeRoundedSquare Then
+        ElseIf mShape = seShapeRoundedSquare Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
                 iHeight = UserControl.ScaleWidth
             Else
@@ -1016,7 +1110,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawRoundRect iGraphics, mBorderColor, mBorderWidth, UserControl.ScaleWidth / 2 - iHeight / 2, UserControl.ScaleHeight / 2 - iHeight / 2, iHeight - 1, iHeight - 1, iRoundSize
             End If
-        ElseIf mShape = veShapeTriangleEquilateral Then
+        ElseIf mShape = seShapeTriangleEquilateral Then
             ReDim iPts(2)
             
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
@@ -1048,7 +1142,7 @@ Private Sub Draw()
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
             
-        ElseIf mShape = veShapeTriangleIsosceles Then
+        ElseIf mShape = seShapeTriangleIsosceles Then
             ReDim iPts(2)
             
             iPts(0).X = iUCWidth / 2
@@ -1071,7 +1165,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeTriangleScalene Then
+        ElseIf mShape = seShapeTriangleScalene Then
             ReDim iPts(2)
             
             iPts(0).X = iUCWidth / 2 - (iUCWidth / 100 * mShift)
@@ -1094,7 +1188,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeTriangleRight Then
+        ElseIf mShape = seShapeTriangleRight Then
             ReDim iPts(2)
             
             iPts(0).X = 0
@@ -1117,7 +1211,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeRhombus Then
+        ElseIf mShape = seShapeRhombus Then
             ReDim iPts(3)
             
             iPts(0).X = iUCWidth / 2
@@ -1143,7 +1237,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeKite Then
+        ElseIf mShape = seShapeKite Then
             ReDim iPts(3)
             
             iLng = iUCHeight / 2 - (iUCHeight / 100 * mShift / 20 * 15)
@@ -1171,7 +1265,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeDiamond Then
+        ElseIf mShape = seShapeDiamond Then
             ReDim iPts(4)
             
             iLng = iUCHeight / 2 - (iUCHeight / 100 * mShift / 20 * 15)
@@ -1202,7 +1296,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeTrapezoid Then
+        ElseIf mShape = seShapeTrapezoid Then
             ReDim iPts(3)
             
             iLng = (iUCWidth / 100 * mShift)
@@ -1234,7 +1328,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeParalellogram Then
+        ElseIf mShape = seShapeParalellogram Then
             ReDim iPts(3)
             
             iLng = (iUCWidth / 100 * mShift)
@@ -1268,14 +1362,14 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeSemicircle Then
+        ElseIf mShape = seShapeSemicircle Then
             If iFilled Then
                 FillSemicircle iGraphics, iFillColor, 0, 0, iUCWidth, iUCHeight
             End If
             If mBorderStyle <> vbTransparent Then
                 DrawSemicircle iGraphics, mBorderColor, mBorderWidth, 0, 0, iUCWidth, iUCHeight
             End If
-        ElseIf mShape = veShapeRegularPolygon Then
+        ElseIf mShape = seShapeRegularPolygon Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
                 iHeight = UserControl.ScaleWidth
             Else
@@ -1291,7 +1385,7 @@ Private Sub Draw()
             
             For c = 0 To mVertices - 1
                 iPts(c).X = (iHeight / 2) * Cos(2 * Pi * (c + 1) / mVertices) + iUCWidth / 2
-                iPts(c).Y = (iHeight / 2) * Sin(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
+                iPts(c).Y = (iHeight / 2) * sIn(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
             Next c
             
             If iFilled Then
@@ -1300,7 +1394,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf (mShape = veShapeStar) Then
+        ElseIf (mShape = seShapeStar) Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
                 iHeight = UserControl.ScaleWidth
             Else
@@ -1316,7 +1410,7 @@ Private Sub Draw()
             
             For c = 0 To mVertices * 2 - 1
                 iPts(c).X = (iHeight / 2) * Cos(2 * Pi * (c + 1) / (mVertices * 2)) + iUCWidth / 2
-                iPts(c).Y = (iHeight / 2) * Sin(2 * Pi * (c + 1) / (mVertices * 2)) + iUCHeight / 2
+                iPts(c).Y = (iHeight / 2) * sIn(2 * Pi * (c + 1) / (mVertices * 2)) + iUCHeight / 2
             Next c
             
             ReDim iPts2(mVertices - 1)
@@ -1324,7 +1418,7 @@ Private Sub Draw()
             
             For c = 0 To mVertices - 1
                 iPts2(c).X = (iHeight / 2 - iShift) * Cos(2 * Pi * (c + 1) / mVertices) + iUCWidth / 2
-                iPts2(c).Y = (iHeight / 2 - iShift) * Sin(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
+                iPts2(c).Y = (iHeight / 2 - iShift) * sIn(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
             Next c
             
             ReDim iPts3(mVertices * 2 - 1)
@@ -1344,7 +1438,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts3
             End If
-        ElseIf (mShape = veShapeJaggedStar) Then
+        ElseIf (mShape = seShapeJaggedStar) Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
                 iHeight = UserControl.ScaleWidth
             Else
@@ -1360,7 +1454,7 @@ Private Sub Draw()
             
             For c = 0 To mVertices * 2 - 1
                 iPts(c).X = (iHeight / 2) * Cos(2 * Pi * (c + 1) / (mVertices * 2)) + iUCWidth / 2
-                iPts(c).Y = (iHeight / 2) * Sin(2 * Pi * (c + 1) / (mVertices * 2)) + iUCHeight / 2
+                iPts(c).Y = (iHeight / 2) * sIn(2 * Pi * (c + 1) / (mVertices * 2)) + iUCHeight / 2
             Next c
             
             ReDim iPts2(mVertices - 1)
@@ -1368,7 +1462,7 @@ Private Sub Draw()
             
             For c = 0 To mVertices - 1
                 iPts2(c).X = (iHeight / 2 - iShift) * Cos(2 * Pi * (c + 1) / mVertices) + iUCWidth / 2
-                iPts2(c).Y = (iHeight / 2 - iShift) * Sin(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
+                iPts2(c).Y = (iHeight / 2 - iShift) * sIn(2 * Pi * (c + 1) / mVertices) + iUCHeight / 2
             Next c
             
             ReDim iPts3(mVertices * 2 - 1)
@@ -1388,7 +1482,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts3
             End If
-        ElseIf mShape = veShapeHeart Then
+        ElseIf mShape = seShapeHeart Then
             ReDim iPts(13)
             
             If mBorderStyle = vbBSInsideSolid Then
@@ -1439,7 +1533,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawClosedCurve iGraphics, mBorderColor, mBorderWidth, iPts, 0.45
             End If
-        ElseIf mShape = veShapeArrow Then
+        ElseIf mShape = seShapeArrow Then
             ReDim iPts(6)
             
             iLng = iUCWidth * (0.75 - mShift / 100 * 0.75 / 20 * 15)
@@ -1475,7 +1569,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeCrescent Then
+        ElseIf mShape = seShapeCrescent Then
             
             ReDim iPts(11)
             iLng = iUCWidth * (0.2 + mShift / 50)
@@ -1536,7 +1630,7 @@ Private Sub Draw()
 '            Next
 '            On Error GoTo 0
         
-        ElseIf mShape = veShapeDrop Then
+        ElseIf mShape = seShapeDrop Then
             ReDim iPts(11)
             
             If mBorderStyle = vbBSInsideSolid Then
@@ -1587,7 +1681,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawClosedCurve iGraphics, mBorderColor, mBorderWidth, iPts, 0.5
             End If
-        ElseIf mShape = veShapeEgg Then
+        ElseIf mShape = seShapeEgg Then
             ReDim iPts(11)
             
             If mBorderStyle = vbBSInsideSolid Then
@@ -1646,7 +1740,7 @@ Private Sub Draw()
 '            Next
 '            On Error GoTo 0
 
-        ElseIf mShape = veShapeLocation Then
+        ElseIf mShape = seShapeLocation Then
             Dim iUCWidthOrig As Long
             Dim iUCHeightOrig As Long
             
@@ -1825,7 +1919,7 @@ Private Sub Draw()
                 'DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iUCWidth * 0.47 / 2, iUCHeight * 0.205, iUCWidth * 0.47, iUCHeight * 0.365
                 DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iUCWidth * 0.47 / 2, iUCHeight * 0.202, iUCWidth * 0.47, iUCHeight * 0.372
             End If
-        ElseIf mShape = veShapeSpeaker Then
+        ElseIf mShape = seShapeSpeaker Then
             ReDim iPts(5)
             
             iPts(0).X = 0
@@ -1857,7 +1951,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawPolygon iGraphics, mBorderColor, mBorderWidth, iPts
             End If
-        ElseIf mShape = veShapeCloud Then
+        ElseIf mShape = seShapeCloud Then
             ReDim iPts(19)
             
             If mBorderStyle = vbBSInsideSolid Then
@@ -1928,7 +2022,7 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawClosedCurve iGraphics, mBorderColor, mBorderWidth, iPts, 0.5
             End If
-        ElseIf mShape = veShapeTalk Then
+        ElseIf mShape = seShapeTalk Then
             iLng = mShift
             If iLng < 0 Then iLng = 0
             
@@ -2029,7 +2123,7 @@ Private Sub Draw()
                 DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth * 0.18 - iShift * 0.9, iUCHeight * 0.92 + iShift * 0.22, iUCWidth * 0.025 + iUCWidth * 0.025 * iShift / 150, iUCHeight * 0.05 + iUCHeight * 0.05 * iShift / 150
             End If
             
-        ElseIf mShape = veShapeShield Then
+        ElseIf mShape = seShapeShield Then
             ReDim iPts(22)
             
             If mBorderStyle = vbBSInsideSolid Then
@@ -2106,15 +2200,14 @@ Private Sub Draw()
             If mBorderStyle <> vbTransparent Then
                 DrawClosedCurve iGraphics, mBorderColor, mBorderWidth, iPts, 0.5
             End If
-            
-'            UserControl.DrawWidth = 10
-'            On Error Resume Next
-'            For c = 0 To UBound(iPts)
-'                UserControl.PSet (iPts(c).X, iPts(c).Y), IIf(c = 4, vbGreen, IIf(c = 13, vbBlue, vbRed))
-'            Next
-'            On Error GoTo 0
-            
-        Else ' If mShape = veShapeRectangle Then
+        ElseIf mShape = seShapePie Then
+            If iFilled Then
+                FillPie iGraphics, iFillColor, 0, 0, iUCWidth, iUCHeight, mShift + 60
+            End If
+            If mBorderStyle <> vbTransparent Then
+                DrawPie iGraphics, mBorderColor, mBorderWidth, 0, 0, iUCWidth, iUCHeight, mShift + 60
+            End If
+        Else ' mShape = seShapeRectangle
             ReDim iPts(3)
             
             iPts(0).X = 0
@@ -2160,17 +2253,17 @@ Private Sub FillPolygon(ByVal nGraphics As Long, ByVal nColor As Long, Points() 
     Dim c As Long
     
     If mStyle3D <> 0 Then
-        If mStyle3DEffect = veStyle3EffectAuto Then
-            If (mShape = veShapeParalellogram) Or (mShape = veShapeRectangle) Or (mShape = veShapeSquare) Or (mShape = veShapeTrapezoid) Or (mShape = veShapeTriangleScalene) Or (mShape = veShapeTriangleRight) Or (mShape = veShapeTriangleIsosceles) Or (mShape = veShapeTriangleEquilateral) Then
-                iStyle3DEffect = veStyle3EffectDiffuse
+        If mStyle3DEffect = seStyle3EffectAuto Then
+            If (mShape = seShapeParalellogram) Or (mShape = seShapeRectangle) Or (mShape = seShapeSquare) Or (mShape = seShapeTrapezoid) Or (mShape = seShapeTriangleScalene) Or (mShape = seShapeTriangleRight) Or (mShape = seShapeTriangleIsosceles) Or (mShape = seShapeTriangleEquilateral) Then
+                iStyle3DEffect = seStyle3EffectDiffuse
             Else
-                iStyle3DEffect = veStyle3EffectGem
+                iStyle3DEffect = seStyle3EffectGem
             End If
         Else
             iStyle3DEffect = mStyle3DEffect
         End If
         
-        If iStyle3DEffect = veStyle3EffectDiffuse Then
+        If iStyle3DEffect = seStyle3EffectDiffuse Then
             GdipCreatePath 0&, iPath
             iRect = ScaleRect(GetPointsLRect(Points), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
             GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
@@ -2181,19 +2274,19 @@ Private Sub FillPolygon(ByVal nGraphics As Long, ByVal nColor As Long, Points() 
                 iPoints(c) = Points(c)
             Next
             If mCurvingFactor <> 0 Then
-                If (mShape = veShapeTriangleScalene) Or (mShape = veShapeTriangleRight) Then
+                If (mShape = seShapeTriangleScalene) Or (mShape = seShapeTriangleRight) Then
                     ' add a point
                     ReDim Preserve iPoints(3)
-                    iPoints(3).X = (iPoints(0).X ^ 2 + iPoints(2).X ^ 2) ^ 0.5 + UserControl.ScaleWidth / 400 * Abs(mCurvingFactor)
-                    iPoints(3).Y = (iPoints(0).Y ^ 2 + iPoints(2).Y ^ 2) ^ 0.5 - UserControl.ScaleHeight / 400 * Abs(mCurvingFactor)
+                    iPoints(3).X = (iPoints(0).X ^ 2 + iPoints(2).X ^ 2) ^ 0.5 + UserControl.ScaleWidth / 300 * Abs(mCurvingFactor)
+                    iPoints(3).Y = (iPoints(0).Y ^ 2 + iPoints(2).Y ^ 2) ^ 0.5 - UserControl.ScaleHeight / 300 * Abs(mCurvingFactor)
                 End If
                 iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
             End If
             iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
         End If
         If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DShadow, 200, 255)), mOpacity), 1
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
         End If
     Else
         iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
@@ -2245,17 +2338,17 @@ Private Sub FillClosedCurve(ByVal nGraphics As Long, ByVal nColor As Long, Point
     Dim iRect As RECT
     
     If mStyle3D <> 0 Then
-        If mStyle3DEffect = veStyle3EffectAuto Then
-            If (mShape = veShapeCrescent) Or (mShape = veShapeLocation) Or (mShape = veShapeCloud) Then
-                iStyle3DEffect = veStyle3EffectDiffuse
+        If mStyle3DEffect = seStyle3EffectAuto Then
+            If (mShape = seShapeCrescent) Or (mShape = seShapeLocation) Or (mShape = seShapeCloud) Then
+                iStyle3DEffect = seStyle3EffectDiffuse
             Else
-                iStyle3DEffect = veStyle3EffectGem
+                iStyle3DEffect = seStyle3EffectGem
             End If
         Else
             iStyle3DEffect = mStyle3DEffect
         End If
         
-        If iStyle3DEffect = veStyle3EffectDiffuse Then
+        If iStyle3DEffect = seStyle3EffectDiffuse Then
             GdipCreatePath 0&, iPath
             iRect = ScaleRect(GetPointsLRect(Points), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
             GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
@@ -2268,8 +2361,8 @@ Private Sub FillClosedCurve(ByVal nGraphics As Long, ByVal nColor As Long, Point
             iRet = GdipCreatePathGradientI(iPoints(0), UBound(Points) + 1, 0&, hBrush)
         End If
         If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DShadow, 200, 255)), mOpacity), 1
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
         End If
     Else
         iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
@@ -2310,13 +2403,13 @@ Private Sub FillEllipse(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X A
     Dim iPoints(3) As POINTL
     
     If mStyle3D <> 0 Then
-        If mStyle3DEffect = veStyle3EffectAuto Then
-            iStyle3DEffect = veStyle3EffectDiffuse
+        If mStyle3DEffect = seStyle3EffectAuto Then
+            iStyle3DEffect = seStyle3EffectDiffuse
         Else
             iStyle3DEffect = mStyle3DEffect
         End If
         
-        If iStyle3DEffect = veStyle3EffectDiffuse Then
+        If iStyle3DEffect = seStyle3EffectDiffuse Then
             GdipCreatePath 0&, iPath
             GdipAddPathEllipseI iPath, X, Y, nWidth, nHeight
             iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
@@ -2332,8 +2425,8 @@ Private Sub FillEllipse(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X A
             iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
         End If
         If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DShadow, 200, 255)), mOpacity), 1
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
         End If
     Else
         iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
@@ -2377,13 +2470,14 @@ Private Sub FillRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X
     Dim iRect As RECT
     Dim iPoints() As POINTL
     
+    nRoundSize = nRoundSize * 2
     If mStyle3D <> 0 Then
-        If mStyle3DEffect = veStyle3EffectAuto Then
-            iStyle3DEffect = veStyle3EffectDiffuse
+        If mStyle3DEffect = seStyle3EffectAuto Then
+            iStyle3DEffect = seStyle3EffectDiffuse
         Else
             iStyle3DEffect = mStyle3DEffect
         End If
-        
+
         ReDim iPoints(3)
         iPoints(0).X = X
         iPoints(0).Y = Y
@@ -2393,7 +2487,7 @@ Private Sub FillRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X
         iPoints(2).Y = Y + nHeight
         iPoints(3).X = X
         iPoints(3).Y = Y + nHeight
-        If iStyle3DEffect = veStyle3EffectDiffuse Then
+        If iStyle3DEffect = seStyle3EffectDiffuse Then
             GdipCreatePath 0&, iPath
             iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
             GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
@@ -2405,39 +2499,32 @@ Private Sub FillRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X
             iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
         End If
         If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DShadow, 200, 255)), mOpacity), 1
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
         End If
     Else
         iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
-    
+
     If iRet = 0 Then
-        Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
-        GdipFillRectangleI nGraphics, hBrush, X + nRoundSize - 1, Y, nWidth - 2 * nRoundSize + 2, nRoundSize                                                                                      ' top line
-        GdipFillRectangleI nGraphics, hBrush, X, Y + nRoundSize - 1, nWidth, Y + nHeight - nRoundSize * 2 + 2                                                                                       ' middle space
-        GdipFillRectangleI nGraphics, hBrush, X + nRoundSize - 1, Y + nHeight - nRoundSize, nWidth - 2 * nRoundSize + 2, nRoundSize                                       ' bottom line
+        GdipCreatePath &H0, iPath
+        GdipAddPathArcI iPath, X, Y, nRoundSize, nRoundSize, 180, 90
+        GdipAddPathArcI iPath, X + nWidth - nRoundSize, Y, nRoundSize, nRoundSize, 270, 90
+        GdipAddPathArcI iPath, X + nWidth - nRoundSize, Y + nHeight - nRoundSize, nRoundSize, nRoundSize, 0, 90
+        GdipAddPathArcI iPath, X, Y + nHeight - nRoundSize, nRoundSize, nRoundSize, 90, 90
+        GdipClosePathFigure iPath
+        GdipFillPath nGraphics, hBrush, iPath
         
-        GdipFillPieI nGraphics, hBrush, X, Y, nRoundSize * 2, nRoundSize * 2, 180, 90                                                                                                               ' top-left corner
-        GdipFillPieI nGraphics, hBrush, X + nWidth - nRoundSize * 2, Y, nRoundSize * 2, nRoundSize * 2, 270, 90                                                                  ' top-right corner
-        GdipFillPieI nGraphics, hBrush, X + nWidth - nRoundSize * 2, Y + nHeight - nRoundSize * 2, nRoundSize * 2, nRoundSize * 2, 0, 90                   ' bottom-right corner
-        GdipFillPieI nGraphics, hBrush, X, Y + nHeight - nRoundSize * 2, nRoundSize * 2, nRoundSize * 2, 90, 90                                                              ' bottom-left corner
-        
+        Call GdipDeletePath(iPath)
         Call GdipDeleteBrush(hBrush)
-        If iPath <> 0 Then
-            GdipDeletePath iPath
-        End If
     End If
-    
 End Sub
 
 Private Sub DrawRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal nDrawnWidth As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, Optional ByVal nRoundSize As Long = 10)
+    Dim iPath As Long
     Dim hPen As Long
-    Dim iWhoKnowsPixels As Long
     
-    If nRoundSize > 0 Then
-        iWhoKnowsPixels = mBorderWidth / nRoundSize
-    End If
+    nRoundSize = nRoundSize * 2
     If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
         If ((mBorderStyle = vbBSSolid) Or (mBorderStyle = vbBSInsideSolid)) Or (mBorderWidth > 1) Then
             Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
@@ -2453,20 +2540,18 @@ Private Sub DrawRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal n
             nWidth = nWidth - nDrawnWidth
             nHeight = nHeight - nDrawnWidth
         End If
+
+        GdipCreatePath &H0, iPath
+        GdipAddPathArcI iPath, X, Y, nRoundSize, nRoundSize, 180, 90
+        GdipAddPathArcI iPath, X + nWidth - nRoundSize, Y, nRoundSize, nRoundSize, 270, 90
+        GdipAddPathArcI iPath, X + nWidth - nRoundSize, Y + nHeight - nRoundSize, nRoundSize, nRoundSize, 0, 90
+        GdipAddPathArcI iPath, X, Y + nHeight - nRoundSize, nRoundSize, nRoundSize, 90, 90
+        GdipClosePathFigure iPath
+        GdipDrawPath nGraphics, hPen, iPath
         
-        GdipDrawLineI nGraphics, hPen, X + nRoundSize - iWhoKnowsPixels - 1, Y, X + nWidth - nRoundSize + iWhoKnowsPixels + 1, Y                                     ' top line
-        GdipDrawLineI nGraphics, hPen, X + nWidth, Y + nRoundSize - iWhoKnowsPixels - 1, X + nWidth, Y + nHeight - nRoundSize + iWhoKnowsPixels + 1    ' right line
-        GdipDrawLineI nGraphics, hPen, X + nRoundSize - iWhoKnowsPixels - 1, Y + nHeight, X + nWidth - nRoundSize + iWhoKnowsPixels + 1, Y + nHeight   ' bottom line
-        GdipDrawLineI nGraphics, hPen, X, Y + nRoundSize - iWhoKnowsPixels - 1, X, Y + nHeight - nRoundSize + iWhoKnowsPixels + 1                                    ' left line
-        
-        GdipDrawArcI nGraphics, hPen, X, Y, nRoundSize * 2, nRoundSize * 2, 180, 90                                                                                                                        ' top-left corner
-        GdipDrawArcI nGraphics, hPen, X + nWidth - nRoundSize * 2, Y, nRoundSize * 2, nRoundSize * 2, 270, 90                                                                           ' top-right corner
-        GdipDrawArcI nGraphics, hPen, X + nWidth - nRoundSize * 2, Y + nHeight - nRoundSize * 2, nRoundSize * 2, nRoundSize * 2, 0, 90                                 ' bottom-right corner
-        GdipDrawArcI nGraphics, hPen, X, Y + nHeight - nRoundSize * 2, nRoundSize * 2, nRoundSize * 2, 90, 90                                                                            ' bottom-left corner
-        
+        Call GdipDeletePath(iPath)
         Call GdipDeletePen(hPen)
     End If
-    
 End Sub
 
 Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long)
@@ -2478,8 +2563,8 @@ Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal 
     Dim iPoints() As POINTL
     
     If mStyle3D <> 0 Then
-        If mStyle3DEffect = veStyle3EffectAuto Then
-            iStyle3DEffect = veStyle3EffectDiffuse
+        If mStyle3DEffect = seStyle3EffectAuto Then
+            iStyle3DEffect = seStyle3EffectDiffuse
         Else
             iStyle3DEffect = mStyle3DEffect
         End If
@@ -2493,7 +2578,7 @@ Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal 
         iPoints(2).Y = Y + nHeight
         iPoints(3).X = X
         iPoints(3).Y = Y + nHeight
-        If iStyle3DEffect = veStyle3EffectDiffuse Then
+        If iStyle3DEffect = seStyle3EffectDiffuse Then
             GdipCreatePath 0&, iPath
             iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
             GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
@@ -2505,8 +2590,8 @@ Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal 
             iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
         End If
         If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And veStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And veStyle3DShadow, 200, 255)), mOpacity), 1
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
         End If
     Else
         iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
@@ -2520,7 +2605,6 @@ Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal 
             GdipDeletePath iPath
         End If
     End If
-    
 End Sub
 
 Private Sub DrawSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal nDrawnWidth As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long)
@@ -2573,7 +2657,7 @@ Private Sub TerminateGDI()
 End Sub
 
 Private Property Get SmoothingMode() As Long
-    If mQuality = veQualityHigh Then
+    If mQuality = seQualityHigh Then
         SmoothingMode = SmoothingModeAntiAlias
     Else
         SmoothingMode = QualityModeLow
@@ -2587,13 +2671,47 @@ End Property
 ' The Modern Subclassing Thunk (MST)
 '=========================================================================
 Private Sub pvSubclass()
+    Dim iDo As Boolean
+    
     If mContainerHwnd <> 0 Then
-        Set m_pSubclass = InitSubclassingThunk(mContainerHwnd, InitAddressOfMethod().SubclassProc(0, 0, 0, 0, 0))
+        If mUseSubclassing = seSCYes Then
+           iDo = True
+        ElseIf mUseSubclassing = seSCNotInIDE Then
+            iDo = Not InIDE
+        ElseIf mUseSubclassing = seSCNotInIDEDesignTime Then
+            If mUserMode Then
+                iDo = True
+            Else
+                iDo = Not InIDE
+            End If
+        End If
+        If iDo Then
+            Set m_pSubclass = InitSubclassingThunk(mContainerHwnd, InitAddressOfMethod().SubclassProc(0, 0, 0, 0, 0))
+            mSubclassed = True
+        End If
     End If
 End Sub
 
+Private Function InIDE() As Boolean
+    Static sValue As Long
+    
+    If sValue = 0 Then
+        Err.Clear
+        On Error Resume Next
+        Debug.Print 1 / 0
+        If Err.Number Then
+            sValue = 1
+        Else
+            sValue = 2
+        End If
+        Err.Clear
+    End If
+    InIDE = (sValue = 1)
+End Function
+
 Private Sub pvUnsubclass()
     Set m_pSubclass = Nothing
+    mSubclassed = False
 End Sub
 
 Private Function InitAddressOfMethod() As ShapeEx
@@ -2770,3 +2888,85 @@ Private Function ScaleRect(nRect As RECT, ByVal nScale As Single) As RECT
     InflateRect iRect, (nRect.Right - nRect.Left) * nScale, (nRect.Bottom - nRect.Top) * nScale
     ScaleRect = iRect
 End Function
+
+Private Sub DrawPie(ByVal nGraphics As Long, ByVal nColor As Long, ByVal nDrawnWidth As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal nAngleMissingPart As Single)
+    Dim hPen As Long
+    
+    If GdipCreatePen1(ConvertColor(nColor, mOpacity), nDrawnWidth, UnitPixel, hPen) = 0 Then
+        If ((mBorderStyle = vbBSSolid) Or (mBorderStyle = vbBSInsideSolid)) Or (mBorderWidth > 1) Then
+            Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        Else
+            Call GdipSetSmoothingMode(nGraphics, QualityModeLow)
+        End If
+        If ((mBorderStyle > vbBSSolid) And (mBorderStyle < vbBSInsideSolid)) Then
+            Call GdipSetPenDashStyle(hPen, mBorderStyle - 1)
+        End If
+        If mBorderStyle = vbBSInsideSolid Then
+            X = X + nDrawnWidth / 2
+            Y = Y + nDrawnWidth / 2
+            nWidth = nWidth - nDrawnWidth
+            nHeight = nHeight - nDrawnWidth
+        End If
+        
+        nAngleMissingPart = Abs(nAngleMissingPart)
+        If nAngleMissingPart > 360 Then nAngleMissingPart = 360
+        GdipDrawPieI nGraphics, hPen, X, Y, nWidth, nHeight, 0, 360 - nAngleMissingPart
+        
+        Call GdipDeletePen(hPen)
+    End If
+End Sub
+
+Private Sub FillPie(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal nAngleMissingPart As Single)
+    Dim hBrush As Long
+    Dim iRet As Long
+    Dim iStyle3DEffect As Long
+    Dim iPath As Long
+    Dim iRect As RECT
+    Dim iPoints() As POINTL
+    
+    If mStyle3D <> 0 Then
+        If mStyle3DEffect = seStyle3EffectAuto Then
+            iStyle3DEffect = seStyle3EffectDiffuse
+        Else
+            iStyle3DEffect = mStyle3DEffect
+        End If
+        
+        ReDim iPoints(3)
+        iPoints(0).X = X
+        iPoints(0).Y = Y
+        iPoints(1).X = X + nWidth
+        iPoints(1).Y = Y
+        iPoints(2).X = X + nWidth
+        iPoints(2).Y = Y + nHeight
+        iPoints(3).X = X
+        iPoints(3).Y = Y + nHeight
+        If iStyle3DEffect = seStyle3EffectDiffuse Then
+            GdipCreatePath 0&, iPath
+            iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
+            GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
+            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+        Else
+            If mCurvingFactor <> 0 Then
+                iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+            End If
+            iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+        End If
+        If iRet = 0 Then
+            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
+        End If
+    Else
+        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
+    End If
+    
+    If iRet = 0 Then
+        Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
+        nAngleMissingPart = Abs(nAngleMissingPart)
+        If nAngleMissingPart > 360 Then nAngleMissingPart = 360
+        GdipFillPieI nGraphics, hBrush, X, Y, nWidth, nHeight, 0, 360 - nAngleMissingPart
+        Call GdipDeleteBrush(hBrush)
+        If iPath <> 0 Then
+            GdipDeletePath iPath
+        End If
+    End If
+End Sub
