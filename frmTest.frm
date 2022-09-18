@@ -348,11 +348,11 @@ Begin VB.Form frmTest
       TabIndex        =   81
       Top             =   3120
       Width           =   552
-      _ExtentX        =   974
-      _ExtentY        =   423
-      BackStyle       =   1
-      BorderColor     =   8421504
-      CurvingFactor   =   30
+      _extentx        =   974
+      _extenty        =   423
+      backstyle       =   1
+      bordercolor     =   8421504
+      curvingfactor   =   30
    End
    Begin VB.Label Label4 
       Caption         =   "Not available in ShapeEx because it is not supported by GDI+."
@@ -388,11 +388,11 @@ Begin VB.Form frmTest
       TabIndex        =   70
       Top             =   1440
       Width           =   552
-      _ExtentX        =   974
-      _ExtentY        =   423
-      BackStyle       =   1
-      BorderColor     =   8421504
-      CurvingFactor   =   30
+      _extentx        =   974
+      _extenty        =   423
+      backstyle       =   1
+      bordercolor     =   8421504
+      curvingfactor   =   30
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -433,11 +433,11 @@ Begin VB.Form frmTest
       TabIndex        =   65
       Top             =   600
       Width           =   550
-      _ExtentX        =   974
-      _ExtentY        =   423
-      BackStyle       =   1
-      BorderColor     =   8421504
-      CurvingFactor   =   30
+      _extentx        =   974
+      _extenty        =   423
+      backstyle       =   1
+      bordercolor     =   8421504
+      curvingfactor   =   30
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -535,12 +535,12 @@ Begin VB.Form frmTest
       TabIndex        =   56
       Top             =   7800
       Width           =   552
-      _ExtentX        =   974
-      _ExtentY        =   974
-      BorderColor     =   56
-      Shape           =   29
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   974
+      _extenty        =   974
+      bordercolor     =   56
+      shape           =   29
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -549,10 +549,10 @@ Begin VB.Form frmTest
       TabIndex        =   55
       Top             =   7800
       Width           =   504
-      _ExtentX        =   910
-      _ExtentY        =   974
-      BorderColor     =   55
-      Shape           =   28
+      _extentx        =   910
+      _extenty        =   974
+      bordercolor     =   55
+      shape           =   28
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -561,12 +561,12 @@ Begin VB.Form frmTest
       TabIndex        =   54
       Top             =   7800
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      BorderColor     =   54
-      Shape           =   27
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      bordercolor     =   54
+      shape           =   27
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -575,10 +575,10 @@ Begin VB.Form frmTest
       TabIndex        =   53
       Top             =   7800
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      BorderColor     =   53
-      Shape           =   26
+      _extentx        =   1588
+      _extenty        =   974
+      bordercolor     =   53
+      shape           =   26
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -587,9 +587,9 @@ Begin VB.Form frmTest
       TabIndex        =   51
       Top             =   7800
       Width           =   396
-      _ExtentX        =   699
-      _ExtentY        =   974
-      Shape           =   24
+      _extentx        =   699
+      _extenty        =   974
+      shape           =   24
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -598,9 +598,9 @@ Begin VB.Form frmTest
       TabIndex        =   52
       Top             =   7800
       Width           =   396
-      _ExtentX        =   699
-      _ExtentY        =   974
-      Shape           =   25
+      _extentx        =   699
+      _extenty        =   974
+      shape           =   25
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -609,10 +609,10 @@ Begin VB.Form frmTest
       TabIndex        =   44
       Top             =   6504
       Width           =   400
-      _ExtentX        =   699
-      _ExtentY        =   974
-      Shape           =   23
-      ShiftPutAutomatically=   20
+      _extentx        =   699
+      _extenty        =   974
+      shape           =   23
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -621,10 +621,10 @@ Begin VB.Form frmTest
       TabIndex        =   43
       Top             =   6504
       Width           =   450
-      _ExtentX        =   804
-      _ExtentY        =   974
-      Shape           =   22
-      ShiftPutAutomatically=   20
+      _extentx        =   804
+      _extenty        =   974
+      shape           =   22
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -633,11 +633,11 @@ Begin VB.Form frmTest
       TabIndex        =   41
       Top             =   6504
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   20
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   20
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -646,11 +646,11 @@ Begin VB.Form frmTest
       TabIndex        =   42
       Top             =   6504
       Width           =   600
-      _ExtentX        =   1058
-      _ExtentY        =   974
-      Shape           =   21
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1058
+      _extenty        =   974
+      shape           =   21
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -659,9 +659,9 @@ Begin VB.Form frmTest
       TabIndex        =   40
       Top             =   6504
       Width           =   600
-      _ExtentX        =   1058
-      _ExtentY        =   974
-      Shape           =   19
+      _extentx        =   1058
+      _extenty        =   974
+      shape           =   19
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -670,11 +670,11 @@ Begin VB.Form frmTest
       TabIndex        =   39
       Top             =   6504
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   18
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   18
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -683,11 +683,11 @@ Begin VB.Form frmTest
       TabIndex        =   29
       Top             =   5208
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   14
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   14
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -696,9 +696,9 @@ Begin VB.Form frmTest
       TabIndex        =   30
       Top             =   5208
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   15
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   15
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -707,9 +707,9 @@ Begin VB.Form frmTest
       TabIndex        =   31
       Top             =   5208
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   16
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   16
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -718,11 +718,11 @@ Begin VB.Form frmTest
       TabIndex        =   32
       Top             =   5208
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   17
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   17
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   562
@@ -731,9 +731,9 @@ Begin VB.Form frmTest
       TabIndex        =   13
       Top             =   2556
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   995
-      Shape           =   5
+      _extentx        =   1588
+      _extenty        =   995
+      shape           =   5
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -742,9 +742,9 @@ Begin VB.Form frmTest
       TabIndex        =   12
       Top             =   2556
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   4
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   4
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   562
@@ -753,9 +753,9 @@ Begin VB.Form frmTest
       TabIndex        =   11
       Top             =   2556
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   995
-      Shape           =   3
+      _extentx        =   1588
+      _extenty        =   995
+      shape           =   3
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -764,9 +764,9 @@ Begin VB.Form frmTest
       TabIndex        =   10
       Top             =   2556
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   2
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   2
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -775,9 +775,9 @@ Begin VB.Form frmTest
       TabIndex        =   9
       Top             =   2556
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   1
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   1
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -786,11 +786,11 @@ Begin VB.Form frmTest
       TabIndex        =   8
       Top             =   2556
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      BackColor       =   16744576
-      BackStyle       =   1
-      FillColor       =   12648447
+      _extentx        =   1588
+      _extenty        =   974
+      backcolor       =   16744576
+      backstyle       =   1
+      fillcolor       =   12648447
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -799,11 +799,11 @@ Begin VB.Form frmTest
       TabIndex        =   17
       Top             =   3912
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   8
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   8
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -812,9 +812,9 @@ Begin VB.Form frmTest
       TabIndex        =   16
       Top             =   3912
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   7
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   7
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -823,11 +823,11 @@ Begin VB.Form frmTest
       TabIndex        =   27
       Top             =   5208
       Width           =   800
-      _ExtentX        =   1439
-      _ExtentY        =   974
-      Shape           =   12
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1439
+      _extenty        =   974
+      shape           =   12
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -836,11 +836,11 @@ Begin VB.Form frmTest
       TabIndex        =   28
       Top             =   5208
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   13
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   13
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -849,11 +849,11 @@ Begin VB.Form frmTest
       TabIndex        =   20
       Top             =   3912
       Width           =   600
-      _ExtentX        =   1058
-      _ExtentY        =   974
-      Shape           =   11
-      Shift           =   20
-      ShiftPutAutomatically=   20
+      _extentx        =   1058
+      _extenty        =   974
+      shape           =   11
+      shift           =   20
+      shiftputautomatically=   20
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -862,9 +862,9 @@ Begin VB.Form frmTest
       TabIndex        =   19
       Top             =   3912
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   10
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   10
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -873,9 +873,9 @@ Begin VB.Form frmTest
       TabIndex        =   15
       Top             =   3912
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   6
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   6
    End
    Begin Proyect1.ShapeEx ShapeEx1 
       Height          =   552
@@ -884,9 +884,9 @@ Begin VB.Form frmTest
       TabIndex        =   18
       Top             =   3912
       Width           =   900
-      _ExtentX        =   1588
-      _ExtentY        =   974
-      Shape           =   9
+      _extentx        =   1588
+      _extenty        =   974
+      shape           =   9
    End
    Begin VB.Label Label3 
       AutoSize        =   -1  'True
@@ -1524,6 +1524,14 @@ Private Sub cboFlipped_Click()
     
     For c = ShapeEx1.LBound To ShapeEx1.UBound
         ShapeEx1(c).Flipped = cboFlipped.ListIndex
+    Next
+End Sub
+
+Private Sub cboQuality_Click()
+    Dim c As Long
+    
+    For c = ShapeEx1.LBound To ShapeEx1.UBound
+        ShapeEx1(c).Quality = cboQuality.ListIndex
     Next
 End Sub
 
