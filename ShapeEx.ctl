@@ -603,6 +603,7 @@ End Property
 
 Public Property Let BorderColor(ByVal nValue As OLE_COLOR)
     If nValue <> mBorderColor Then
+        If Not IsValidOLE_COLOR(nValue) Then Err.Raise 380: Exit Property
         mBorderColor = nValue
         Me.Refresh
         PropertyChanged "BorderColor"
@@ -653,6 +654,7 @@ End Property
 
 Public Property Let BackColor(ByVal nValue As OLE_COLOR)
     If nValue <> mBackColor Then
+        If Not IsValidOLE_COLOR(nValue) Then Err.Raise 380: Exit Property
         mBackColor = nValue
         Me.Refresh
         PropertyChanged "BackColor"
@@ -686,6 +688,7 @@ End Property
 
 Public Property Let FillColor(ByVal nValue As OLE_COLOR)
     If nValue <> mFillColor Then
+        If Not IsValidOLE_COLOR(nValue) Then Err.Raise 380: Exit Property
         mFillColor = nValue
         Me.Refresh
         PropertyChanged "FillColor"
@@ -2974,3 +2977,9 @@ Private Sub FillPie(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Lo
         End If
     End If
 End Sub
+
+Private Function IsValidOLE_COLOR(ByVal nColor As Long) As Boolean
+    Const S_OK As Long = 0
+    IsValidOLE_COLOR = (TranslateColor(nColor, 0, nColor) = S_OK)
+End Function
+
