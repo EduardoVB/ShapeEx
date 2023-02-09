@@ -669,6 +669,7 @@ End Property
 
 Public Property Let BackStyle(ByVal nValue As SEBackStyleConstants)
     If nValue <> mBackStyle Then
+        If (nValue < seTransparent) Or (nValue > seOpaque) Then Err.Raise 380, TypeName(Me): Exit Property
         mBackStyle = nValue
         Me.Refresh
         PropertyChanged "BackStyle"
@@ -765,6 +766,7 @@ End Property
 
 Public Property Let Quality(ByVal nValue As SEQualityConstants)
     If nValue <> mQuality Then
+        If (nValue < seQualityLow) Or (nValue > seQualityHigh) Then Err.Raise 380, TypeName(Me): Exit Property
         mQuality = nValue
         Me.Refresh
         PropertyChanged "Quality"
@@ -883,6 +885,7 @@ End Property
 
 Public Property Let Flipped(ByVal nValue As SEFlippedConstants)
     If nValue <> mFlipped Then
+        If (nValue < seFlippedNo) Or (nValue > seFlippedBoth) Then Err.Raise 380, TypeName(Me): Exit Property
         mFlipped = nValue
         Me.Refresh
         PropertyChanged "Flipped"
@@ -956,6 +959,7 @@ Public Property Let UseSubclassing(ByVal nValue As SESubclassingConstants)
     Dim iMessage As T_MSG
     
     If nValue <> mUseSubclassing Then
+        If (nValue < seSCNo) Or (nValue > seSCNotInIDEDesignTime) Then Err.Raise 380, TypeName(Me): Exit Property
         If Not mUserMode Then
             If nValue = seSCNo Then
                 MsgBox "In most cases subclassing is not necessary (and without subclassing is safer for running in the IDE), but in some special cases when the figure needs to be painted outside the control bounds, it may experience glitches.", vbInformation
