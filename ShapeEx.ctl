@@ -7,9 +7,9 @@ Begin VB.UserControl ShapeEx
    ClientWidth     =   3840
    ClipBehavior    =   0  'None
    HasDC           =   0   'False
-   ScaleHeight     =   240
+   ScaleHeight     =   192
    ScaleMode       =   3  'Pixel
-   ScaleWidth      =   320
+   ScaleWidth      =   256
    ToolboxBitmap   =   "ShapeEx.ctx":0000
    Windowless      =   -1  'True
    Begin VB.Timer tmrPainting 
@@ -123,6 +123,14 @@ Private Type POINTL
     Y As Long
 End Type
 
+Private Enum WrapMode
+    WrapModeTile
+    WrapModeTileFlipX
+    WrapModeTileFlipY
+    WrapModeTileFlipXY
+    WrapModeClamp
+End Enum
+
 Private Declare Function GdipCreateFromHDC Lib "gdiplus" (ByVal hDC As Long, ByRef graphics As Long) As Long
 Private Declare Function GdipDeleteGraphics Lib "gdiplus" (ByVal graphics As Long) As Long
 Private Declare Function GdiplusStartup Lib "gdiplus" (ByRef token As Long, ByRef lpInput As GDIPlusStartupInput, Optional ByRef lpOutput As Any) As Long
@@ -156,7 +164,10 @@ Private Declare Function GdipClosePathFigure Lib "GdiPlus.dll" (ByVal mpath As L
 Private Declare Function GdipDrawPath Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mPen As Long, ByVal mpath As Long) As Long
 Private Declare Function GdipFillPath Lib "GdiPlus.dll" (ByVal mGraphics As Long, ByVal mBrush As Long, ByVal mpath As Long) As Long
 Private Declare Function GdipDrawPieI Lib "gdiplus" (ByVal graphics As Long, ByVal pen As Long, ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long, ByVal startAngle As Single, ByVal sweepAngle As Single) As Long
-                              
+Private Declare Function GdipCreateBitmapFromHBITMAP Lib "gdiplus" (ByVal hbm As Long, ByVal hpal As Long, bitmap As Long) As Long
+Private Declare Function GdipCreateTexture Lib "gdiplus" (ByVal Image As Long, ByVal WrapMd As WrapMode, texture As Long) As Long
+Private Declare Function GdipDisposeImage Lib "gdiplus" (ByVal Image As Long) As Long
+
 Private Enum FillModeConstants
     FillModeAlternate = &H0
     FillModeWinding = &H1
@@ -218,9 +229,10 @@ Public Enum SEBackStyleConstants
     seOpaque = 1
 End Enum
 
-Public Enum SEFillStyle2Constants
+Public Enum SEFillStyleConstants
     seFSSolid = vbFSSolid
     seFSTransparent = vbFSTransparent
+    seFSTexture = 8
 End Enum
 
 Public Enum SEQualityConstants
@@ -300,6 +312,7 @@ Private mMouseIcon As StdPicture
 Private mStyle3D As SEStyle3DConstants
 Private mStyle3DEffect As SEStyle3DEffectConstants
 Private mUseSubclassing As SESubclassingConstants
+Private mFillTexture As StdPicture
 
 Private mGdipToken As Long
 Private mContainerHwnd As Long
@@ -309,6 +322,7 @@ Private mCurvingFactor2 As Single
 Private mUserMode As Boolean
 Private mSubclassed As Boolean
 Private mDrawingOutsideUC As Boolean
+Private mTextureBrush As Long
 
 Private Sub tmrPainting_Timer()
     tmrPainting.Enabled = False
@@ -547,6 +561,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     mStyle3D = PropBag.ReadProperty("Style3D", mdef_Style3D)
     mStyle3DEffect = PropBag.ReadProperty("Style3DEffect", mdef_Style3DEffect)
     mUseSubclassing = PropBag.ReadProperty("UseSubclassing", mdef_UseSubclassing)
+    Set mFillTexture = PropBag.ReadProperty("FillTexture", Nothing)
     
     UserControl.MousePointer = mMousePointer
     Set UserControl.MouseIcon = mMouseIcon
@@ -591,6 +606,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     PropBag.WriteProperty "Style3D", mStyle3D, mdef_Style3D
     PropBag.WriteProperty "Style3DEffect", mStyle3DEffect, mdef_Style3DEffect
     PropBag.WriteProperty "UseSubclassing", mUseSubclassing, mdef_UseSubclassing
+    PropBag.WriteProperty "FillTexture", mFillTexture, Nothing
 End Sub
 
 
@@ -696,16 +712,16 @@ Public Property Let FillColor(ByVal nValue As OLE_COLOR)
 End Property
 
 
-Public Property Get FillStyle() As SEFillStyle2Constants
+Public Property Get FillStyle() As SEFillStyleConstants
 Attribute FillStyle.VB_Description = "Returns/sets the fill style of a shape."
 Attribute FillStyle.VB_ProcData.VB_Invoke_Property = ";Apariencia"
 Attribute FillStyle.VB_UserMemId = -511
     FillStyle = mFillStyle
 End Property
 
-Public Property Let FillStyle(ByVal nValue As SEFillStyle2Constants)
+Public Property Let FillStyle(ByVal nValue As SEFillStyleConstants)
     If nValue <> mFillStyle Then
-        If (nValue < seFSSolid) Or (nValue > seFSTransparent) Then Err.Raise 380, TypeName(Me): Exit Property
+        If (nValue < seFSSolid) Or (nValue > seFSTexture) Then Err.Raise 380, TypeName(Me): Exit Property
         mFillStyle = nValue
         Me.Refresh
         PropertyChanged "FillStyle"
@@ -994,6 +1010,29 @@ Public Property Let UseSubclassing(ByVal nValue As SESubclassingConstants)
 End Property
 
 
+Public Property Get FillTexture() As StdPicture
+    Set FillTexture = mFillTexture
+End Property
+
+Public Property Set FillTexture(nImage As StdPicture)
+    If Not mFillTexture Is nImage Then
+        If Not nImage Is Nothing Then
+            If nImage.Type <> vbPicTypeBitmap Then
+                Err.Raise 380, TypeName(Me), "Texture image must be type bitmap."
+            End If
+        End If
+        Set mFillTexture = nImage
+        If mTextureBrush <> 0 Then CreateTextureBrush
+        Me.Refresh
+        PropertyChanged "FillTexture"
+    End If
+End Property
+
+Public Property Let FillTexture(nImage As StdPicture)
+    Set FillTexture = nImage
+End Property
+
+
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_UserMemId = -515
     hWnd = UserControl.hWnd
@@ -1009,6 +1048,7 @@ Private Sub Draw()
     Dim iGraphics As Long
     Dim iFillColor As Long
     Dim iFilled As Boolean
+    Dim iUseTexture As Boolean
     Dim iHeight As Long
     Dim iRoundSize As Long
     Dim iPts() As POINTL
@@ -1024,15 +1064,23 @@ Private Sub Draw()
     
     If mGdipToken = 0 Then InitGDI
     If GdipCreateFromHDC(UserControl.hDC, iGraphics) = 0 Then
-        
+        iUseTexture = False
         If mFillStyle = seFSSolid Then
             iFilled = True
             iFillColor = mFillColor
+        ElseIf (mFillStyle = seFSTexture) And (Not (mFillTexture Is Nothing)) Then
+            If mFillTexture.Handle <> 0 Then
+                iFilled = True
+                iUseTexture = True
+            End If
         ElseIf mBackStyle = seOpaque Then
             iFilled = True
             iFillColor = mBackColor
+        End If
+        If iUseTexture Then
+            If mTextureBrush = 0 Then CreateTextureBrush
         Else
-            iFilled = False
+            If mTextureBrush <> 0 Then DestroyTextureBrush
         End If
         
         iUCWidth = UserControl.ScaleWidth - 1
@@ -1055,7 +1103,7 @@ Private Sub Draw()
                 FillEllipse iGraphics, iFillColor, iUCWidth / 2 - iDiameter / 2, iUCHeight / 2 - iDiameter / 2, iDiameter, iDiameter
             End If
             If mBorderStyle <> vbTransparent Then
-                DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iDiameter / 2, iUCHeight / 2 - iDiameter / 2, iDiameter, iDiameter
+                DrawEllipse iGraphics, mBorderColor, mBorderWidth, iUCWidth / 2 - iDiameter / 2, (iUCHeight / 2 - iDiameter / 2), iDiameter - 0.51, iDiameter - 0.51
             End If
         ElseIf mShape = seShapeSquare Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
@@ -1106,9 +1154,9 @@ Private Sub Draw()
             End If
         ElseIf mShape = seShapeRoundedSquare Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
-                iHeight = UserControl.ScaleWidth
+                iHeight = iUCWidth
             Else
-                iHeight = UserControl.ScaleHeight
+                iHeight = iUCHeight
             End If
             iRoundSize = iHeight * 0.125
             If iFilled Then
@@ -1121,9 +1169,9 @@ Private Sub Draw()
             ReDim iPts(2)
             
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
-                iEdge = UserControl.ScaleWidth
+                iEdge = iUCWidth
             Else
-                iEdge = UserControl.ScaleHeight
+                iEdge = iUCHeight
             End If
             
 '            iEdge = iHeight * 2 / 3 ^ 0.5
@@ -1378,9 +1426,9 @@ Private Sub Draw()
             End If
         ElseIf mShape = seShapeRegularPolygon Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
-                iHeight = UserControl.ScaleWidth
+                iHeight = iUCWidth
             Else
-                iHeight = UserControl.ScaleHeight
+                iHeight = iUCHeight
             End If
             
             ReDim iPts(mVertices - 1)
@@ -1403,9 +1451,9 @@ Private Sub Draw()
             End If
         ElseIf (mShape = seShapeStar) Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
-                iHeight = UserControl.ScaleWidth
+                iHeight = iUCWidth
             Else
-                iHeight = UserControl.ScaleHeight
+                iHeight = iUCHeight
             End If
             
             ReDim iPts(mVertices * 2 - 1)
@@ -1447,9 +1495,9 @@ Private Sub Draw()
             End If
         ElseIf (mShape = seShapeJaggedStar) Then
             If UserControl.ScaleWidth < UserControl.ScaleHeight Then
-                iHeight = UserControl.ScaleWidth
+                iHeight = iUCWidth
             Else
-                iHeight = UserControl.ScaleHeight
+                iHeight = iUCHeight
             End If
             
             ReDim iPts(mVertices * 2 - 1)
@@ -2259,50 +2307,52 @@ Private Sub FillPolygon(ByVal nGraphics As Long, ByVal nColor As Long, Points() 
     Dim iPoints() As POINTL
     Dim c As Long
     
-    If mStyle3D <> 0 Then
-        If mStyle3DEffect = seStyle3EffectAuto Then
-            If (mShape = seShapeParalellogram) Or (mShape = seShapeRectangle) Or (mShape = seShapeSquare) Or (mShape = seShapeTrapezoid) Or (mShape = seShapeTriangleScalene) Or (mShape = seShapeTriangleRight) Or (mShape = seShapeTriangleIsosceles) Or (mShape = seShapeTriangleEquilateral) Then
-                iStyle3DEffect = seStyle3EffectDiffuse
-            Else
-                iStyle3DEffect = seStyle3EffectGem
-            End If
-        Else
-            iStyle3DEffect = mStyle3DEffect
-        End If
-        
-        If iStyle3DEffect = seStyle3EffectDiffuse Then
-            GdipCreatePath 0&, iPath
-            iRect = ScaleRect(GetPointsLRect(Points), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
-            GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
-            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
-        Else
-            ReDim iPoints(UBound(Points))
-            For c = 0 To UBound(Points)
-                iPoints(c) = Points(c)
-            Next
-            If mCurvingFactor <> 0 Then
-                If (mShape = seShapeTriangleScalene) Or (mShape = seShapeTriangleRight) Then
-                    ' add a point
-                    ReDim Preserve iPoints(3)
-                    iPoints(3).X = (iPoints(0).X ^ 2 + iPoints(2).X ^ 2) ^ 0.5 + UserControl.ScaleWidth / 300 * Abs(mCurvingFactor)
-                    iPoints(3).Y = (iPoints(0).Y ^ 2 + iPoints(2).Y ^ 2) ^ 0.5 - UserControl.ScaleHeight / 300 * Abs(mCurvingFactor)
+    If mTextureBrush = 0 Then
+        If mStyle3D <> 0 Then
+            If mStyle3DEffect = seStyle3EffectAuto Then
+                If (mShape = seShapeParalellogram) Or (mShape = seShapeRectangle) Or (mShape = seShapeSquare) Or (mShape = seShapeTrapezoid) Or (mShape = seShapeTriangleScalene) Or (mShape = seShapeTriangleRight) Or (mShape = seShapeTriangleIsosceles) Or (mShape = seShapeTriangleEquilateral) Then
+                    iStyle3DEffect = seStyle3EffectDiffuse
+                Else
+                    iStyle3DEffect = seStyle3EffectGem
                 End If
-                iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+            Else
+                iStyle3DEffect = mStyle3DEffect
             End If
-            iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            
+            If iStyle3DEffect = seStyle3EffectDiffuse Then
+                GdipCreatePath 0&, iPath
+                iRect = ScaleRect(GetPointsLRect(Points), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
+                GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
+                iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+            Else
+                ReDim iPoints(UBound(Points))
+                For c = 0 To UBound(Points)
+                    iPoints(c) = Points(c)
+                Next
+                If mCurvingFactor <> 0 Then
+                    If (mShape = seShapeTriangleScalene) Or (mShape = seShapeTriangleRight) Then
+                        ' add a point
+                        ReDim Preserve iPoints(3)
+                        iPoints(3).X = (iPoints(0).X ^ 2 + iPoints(2).X ^ 2) ^ 0.5 + UserControl.ScaleWidth / 300 * Abs(mCurvingFactor)
+                        iPoints(3).Y = (iPoints(0).Y ^ 2 + iPoints(2).Y ^ 2) ^ 0.5 - UserControl.ScaleHeight / 300 * Abs(mCurvingFactor)
+                    End If
+                    iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+                End If
+                iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            End If
+            If iRet = 0 Then
+                GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+                GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
+            End If
+        Else
+            iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
         End If
-        If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
-        End If
-    Else
-        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
     
     If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         If mCurvingFactor = 0 Then
-            GdipFillPolygonI nGraphics, hBrush, Points(0), UBound(Points) + 1, nFillMode
+            GdipFillPolygonI nGraphics, IIf(mTextureBrush <> 0, mTextureBrush, hBrush), Points(0), UBound(Points) + 1, nFillMode
         Else
             GdipFillClosedCurve2I nGraphics, hBrush, Points(0), UBound(Points) + 1, mCurvingFactor2, nFillMode
         End If
@@ -2344,40 +2394,42 @@ Private Sub FillClosedCurve(ByVal nGraphics As Long, ByVal nColor As Long, Point
     Dim iStyle3DEffect As Long
     Dim iRect As RECT
     
-    If mStyle3D <> 0 Then
-        If mStyle3DEffect = seStyle3EffectAuto Then
-            If (mShape = seShapeCrescent) Or (mShape = seShapeLocation) Or (mShape = seShapeCloud) Then
-                iStyle3DEffect = seStyle3EffectDiffuse
+    If mTextureBrush = 0 Then
+        If mStyle3D <> 0 Then
+            If mStyle3DEffect = seStyle3EffectAuto Then
+                If (mShape = seShapeCrescent) Or (mShape = seShapeLocation) Or (mShape = seShapeCloud) Then
+                    iStyle3DEffect = seStyle3EffectDiffuse
+                Else
+                    iStyle3DEffect = seStyle3EffectGem
+                End If
             Else
-                iStyle3DEffect = seStyle3EffectGem
+                iStyle3DEffect = mStyle3DEffect
+            End If
+            
+            If iStyle3DEffect = seStyle3EffectDiffuse Then
+                GdipCreatePath 0&, iPath
+                iRect = ScaleRect(GetPointsLRect(Points), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
+                GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
+                iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+            Else
+                iPoints = ExpandPointsL(Points, 0.05)
+                If mCurvingFactor <> 0 Then
+                    iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+                End If
+                iRet = GdipCreatePathGradientI(iPoints(0), UBound(Points) + 1, 0&, hBrush)
+            End If
+            If iRet = 0 Then
+                GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+                GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
             End If
         Else
-            iStyle3DEffect = mStyle3DEffect
+            iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
         End If
-        
-        If iStyle3DEffect = seStyle3EffectDiffuse Then
-            GdipCreatePath 0&, iPath
-            iRect = ScaleRect(GetPointsLRect(Points), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
-            GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
-            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
-        Else
-            iPoints = ExpandPointsL(Points, 0.05)
-            If mCurvingFactor <> 0 Then
-                iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
-            End If
-            iRet = GdipCreatePathGradientI(iPoints(0), UBound(Points) + 1, 0&, hBrush)
-        End If
-        If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
-        End If
-    Else
-        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
     
     If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
-        GdipFillClosedCurve2I nGraphics, hBrush, Points(0), UBound(Points) + 1, nTension, nFillMode
+        GdipFillClosedCurve2I nGraphics, IIf(mTextureBrush <> 0, mTextureBrush, hBrush), Points(0), UBound(Points) + 1, nTension, nFillMode
         Call GdipDeleteBrush(hBrush)
         If iPath <> 0 Then
             GdipDeletePath iPath
@@ -2409,39 +2461,41 @@ Private Sub FillEllipse(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X A
     Dim iRect As RECT
     Dim iPoints(3) As POINTL
     
-    If mStyle3D <> 0 Then
-        If mStyle3DEffect = seStyle3EffectAuto Then
-            iStyle3DEffect = seStyle3EffectDiffuse
+    If mTextureBrush = 0 Then
+        If mStyle3D <> 0 Then
+            If mStyle3DEffect = seStyle3EffectAuto Then
+                iStyle3DEffect = seStyle3EffectDiffuse
+            Else
+                iStyle3DEffect = mStyle3DEffect
+            End If
+            
+            If iStyle3DEffect = seStyle3EffectDiffuse Then
+                GdipCreatePath 0&, iPath
+                GdipAddPathEllipseI iPath, X, Y, nWidth, nHeight
+                iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+            Else
+                iPoints(0).X = X
+                iPoints(0).Y = Y
+                iPoints(1).X = X + nWidth
+                iPoints(1).Y = Y
+                iPoints(2).X = X + nWidth
+                iPoints(2).Y = Y + nHeight
+                iPoints(3).X = X
+                iPoints(3).Y = Y + nHeight
+                iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            End If
+            If iRet = 0 Then
+                GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+                GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
+            End If
         Else
-            iStyle3DEffect = mStyle3DEffect
+            iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
         End If
-        
-        If iStyle3DEffect = seStyle3EffectDiffuse Then
-            GdipCreatePath 0&, iPath
-            GdipAddPathEllipseI iPath, X, Y, nWidth, nHeight
-            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
-        Else
-            iPoints(0).X = X
-            iPoints(0).Y = Y
-            iPoints(1).X = X + nWidth
-            iPoints(1).Y = Y
-            iPoints(2).X = X + nWidth
-            iPoints(2).Y = Y + nHeight
-            iPoints(3).X = X
-            iPoints(3).Y = Y + nHeight
-            iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
-        End If
-        If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
-        End If
-    Else
-        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
     
     If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
-        GdipFillEllipseI nGraphics, hBrush, X, Y, nWidth, nHeight
+        GdipFillEllipseI nGraphics, IIf(mTextureBrush <> 0, mTextureBrush, hBrush), X, Y, nWidth, nHeight
         Call GdipDeleteBrush(hBrush)
         If iPath <> 0 Then
             GdipDeletePath iPath
@@ -2478,41 +2532,43 @@ Private Sub FillRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X
     Dim iPoints() As POINTL
     
     nRoundSize = nRoundSize * 2
-    If mStyle3D <> 0 Then
-        If mStyle3DEffect = seStyle3EffectAuto Then
-            iStyle3DEffect = seStyle3EffectDiffuse
-        Else
-            iStyle3DEffect = mStyle3DEffect
-        End If
-
-        ReDim iPoints(3)
-        iPoints(0).X = X
-        iPoints(0).Y = Y
-        iPoints(1).X = X + nWidth
-        iPoints(1).Y = Y
-        iPoints(2).X = X + nWidth
-        iPoints(2).Y = Y + nHeight
-        iPoints(3).X = X
-        iPoints(3).Y = Y + nHeight
-        If iStyle3DEffect = seStyle3EffectDiffuse Then
-            GdipCreatePath 0&, iPath
-            iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
-            GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
-            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
-        Else
-            If mCurvingFactor <> 0 Then
-                iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+    If mTextureBrush = 0 Then
+        If mStyle3D <> 0 Then
+            If mStyle3DEffect = seStyle3EffectAuto Then
+                iStyle3DEffect = seStyle3EffectDiffuse
+            Else
+                iStyle3DEffect = mStyle3DEffect
             End If
-            iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+    
+            ReDim iPoints(3)
+            iPoints(0).X = X
+            iPoints(0).Y = Y
+            iPoints(1).X = X + nWidth
+            iPoints(1).Y = Y
+            iPoints(2).X = X + nWidth
+            iPoints(2).Y = Y + nHeight
+            iPoints(3).X = X
+            iPoints(3).Y = Y + nHeight
+            If iStyle3DEffect = seStyle3EffectDiffuse Then
+                GdipCreatePath 0&, iPath
+                iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
+                GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
+                iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+            Else
+                If mCurvingFactor <> 0 Then
+                    iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+                End If
+                iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            End If
+            If iRet = 0 Then
+                GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+                GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
+            End If
+        Else
+            iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
         End If
-        If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
-        End If
-    Else
-        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
-
+    
     If iRet = 0 Then
         GdipCreatePath &H0, iPath
         GdipAddPathArcI iPath, X, Y, nRoundSize, nRoundSize, 180, 90
@@ -2520,7 +2576,7 @@ Private Sub FillRoundRect(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X
         GdipAddPathArcI iPath, X + nWidth - nRoundSize, Y + nHeight - nRoundSize, nRoundSize, nRoundSize, 0, 90
         GdipAddPathArcI iPath, X, Y + nHeight - nRoundSize, nRoundSize, nRoundSize, 90, 90
         GdipClosePathFigure iPath
-        GdipFillPath nGraphics, hBrush, iPath
+        GdipFillPath nGraphics, IIf(mTextureBrush <> 0, mTextureBrush, hBrush), iPath
         
         Call GdipDeletePath(iPath)
         Call GdipDeleteBrush(hBrush)
@@ -2569,44 +2625,46 @@ Private Sub FillSemicircle(ByVal nGraphics As Long, ByVal nColor As Long, ByVal 
     Dim iRect As RECT
     Dim iPoints() As POINTL
     
-    If mStyle3D <> 0 Then
-        If mStyle3DEffect = seStyle3EffectAuto Then
-            iStyle3DEffect = seStyle3EffectDiffuse
-        Else
-            iStyle3DEffect = mStyle3DEffect
-        End If
-        
-        ReDim iPoints(3)
-        iPoints(0).X = X
-        iPoints(0).Y = Y
-        iPoints(1).X = X + nWidth
-        iPoints(1).Y = Y
-        iPoints(2).X = X + nWidth
-        iPoints(2).Y = Y + nHeight
-        iPoints(3).X = X
-        iPoints(3).Y = Y + nHeight
-        If iStyle3DEffect = seStyle3EffectDiffuse Then
-            GdipCreatePath 0&, iPath
-            iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
-            GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
-            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
-        Else
-            If mCurvingFactor <> 0 Then
-                iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+    If mTextureBrush = 0 Then
+        If mStyle3D <> 0 Then
+            If mStyle3DEffect = seStyle3EffectAuto Then
+                iStyle3DEffect = seStyle3EffectDiffuse
+            Else
+                iStyle3DEffect = mStyle3DEffect
             End If
-            iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            
+            ReDim iPoints(3)
+            iPoints(0).X = X
+            iPoints(0).Y = Y
+            iPoints(1).X = X + nWidth
+            iPoints(1).Y = Y
+            iPoints(2).X = X + nWidth
+            iPoints(2).Y = Y + nHeight
+            iPoints(3).X = X
+            iPoints(3).Y = Y + nHeight
+            If iStyle3DEffect = seStyle3EffectDiffuse Then
+                GdipCreatePath 0&, iPath
+                iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
+                GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
+                iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+            Else
+                If mCurvingFactor <> 0 Then
+                    iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+                End If
+                iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            End If
+            If iRet = 0 Then
+                GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+                GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
+            End If
+        Else
+            iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
         End If
-        If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
-        End If
-    Else
-        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
     
     If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
-        GdipFillPieI nGraphics, hBrush, X, Y, nWidth, nHeight * 2, 180, 180
+        GdipFillPieI nGraphics, IIf(mTextureBrush <> 0, mTextureBrush, hBrush), X, Y, nWidth, nHeight * 2, 180, 180
         Call GdipDeleteBrush(hBrush)
         If iPath <> 0 Then
             GdipDeletePath iPath
@@ -2659,6 +2717,7 @@ Private Sub InitGDI()
 End Sub
 
 Private Sub TerminateGDI()
+    If mTextureBrush <> 0 Then DestroyTextureBrush
     Call GdiplusShutdown(mGdipToken)
     mGdipToken = 0
 End Sub
@@ -2931,46 +2990,48 @@ Private Sub FillPie(ByVal nGraphics As Long, ByVal nColor As Long, ByVal X As Lo
     Dim iRect As RECT
     Dim iPoints() As POINTL
     
-    If mStyle3D <> 0 Then
-        If mStyle3DEffect = seStyle3EffectAuto Then
-            iStyle3DEffect = seStyle3EffectDiffuse
-        Else
-            iStyle3DEffect = mStyle3DEffect
-        End If
-        
-        ReDim iPoints(3)
-        iPoints(0).X = X
-        iPoints(0).Y = Y
-        iPoints(1).X = X + nWidth
-        iPoints(1).Y = Y
-        iPoints(2).X = X + nWidth
-        iPoints(2).Y = Y + nHeight
-        iPoints(3).X = X
-        iPoints(3).Y = Y + nHeight
-        If iStyle3DEffect = seStyle3EffectDiffuse Then
-            GdipCreatePath 0&, iPath
-            iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
-            GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
-            iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
-        Else
-            If mCurvingFactor <> 0 Then
-                iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+    If mTextureBrush = 0 Then
+        If mStyle3D <> 0 Then
+            If mStyle3DEffect = seStyle3EffectAuto Then
+                iStyle3DEffect = seStyle3EffectDiffuse
+            Else
+                iStyle3DEffect = mStyle3DEffect
             End If
-            iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            
+            ReDim iPoints(3)
+            iPoints(0).X = X
+            iPoints(0).Y = Y
+            iPoints(1).X = X + nWidth
+            iPoints(1).Y = Y
+            iPoints(2).X = X + nWidth
+            iPoints(2).Y = Y + nHeight
+            iPoints(3).X = X
+            iPoints(3).Y = Y + nHeight
+            If iStyle3DEffect = seStyle3EffectDiffuse Then
+                GdipCreatePath 0&, iPath
+                iRect = ScaleRect(GetPointsLRect(iPoints), Sqr(2) * (1 + Abs(mCurvingFactor) / 400))
+                GdipAddPathEllipseI iPath, iRect.Left, iRect.Top, iRect.Right - iRect.Left, iRect.Bottom - iRect.Top
+                iRet = GdipCreatePathGradientFromPath(iPath, hBrush)
+            Else
+                If mCurvingFactor <> 0 Then
+                    iPoints = ExpandPointsL(iPoints, Abs(mCurvingFactor) / 80)
+                End If
+                iRet = GdipCreatePathGradientI(iPoints(0), UBound(iPoints) + 1, 0&, hBrush)
+            End If
+            If iRet = 0 Then
+                GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
+                GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
+            End If
+        Else
+            iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
         End If
-        If iRet = 0 Then
-            GdipSetPathGradientCenterColor hBrush, ConvertColor(ShiftColor(nColor, vbWhite, IIf(mStyle3D And seStyle3DLight, 200, 255)), mOpacity)
-            GdipSetPathGradientSurroundColorsWithCount hBrush, ConvertColor(ShiftColor(nColor, vbBlack, IIf(mStyle3D And seStyle3DShadow, 200, 255)), mOpacity), 1
-        End If
-    Else
-        iRet = GdipCreateSolidFill(ConvertColor(nColor, mOpacity), hBrush)
     End If
     
     If iRet = 0 Then
         Call GdipSetSmoothingMode(nGraphics, SmoothingMode)
         nAngleMissingPart = Abs(nAngleMissingPart)
         If nAngleMissingPart > 360 Then nAngleMissingPart = 360
-        GdipFillPieI nGraphics, hBrush, X, Y, nWidth, nHeight, 0, 360 - nAngleMissingPart
+        GdipFillPieI nGraphics, IIf(mTextureBrush <> 0, mTextureBrush, hBrush), X, Y, nWidth, nHeight, 0, 360 - nAngleMissingPart
         Call GdipDeleteBrush(hBrush)
         If iPath <> 0 Then
             GdipDeletePath iPath
@@ -2982,4 +3043,24 @@ Private Function IsValidOLE_COLOR(ByVal nColor As Long) As Boolean
     Const S_OK As Long = 0
     IsValidOLE_COLOR = (TranslateColor(nColor, 0, nColor) = S_OK)
 End Function
+
+Private Sub CreateTextureBrush()
+    Dim hImg As Long
+    Dim hBrush As Long
+    
+    If mFillTexture Is Nothing Then Exit Sub
+    If mFillTexture.Handle = 0 Then Exit Sub
+    If mTextureBrush <> 0 Then DestroyTextureBrush
+    If GdipCreateBitmapFromHBITMAP(mFillTexture.Handle, 0&, hImg) = 0 Then
+        GdipCreateTexture hImg, WrapModeTile, mTextureBrush
+        GdipDisposeImage hImg
+    End If
+End Sub
+
+Private Sub DestroyTextureBrush()
+    If mTextureBrush <> 0 Then
+        GdipDeleteBrush (mTextureBrush)
+        mTextureBrush = 0
+    End If
+End Sub
 
